@@ -28,7 +28,7 @@ const WPFORMS_COINSNAP_FILE = __FILE__;
 
 define( 'SERVER_PHP_VERSION', '7.4' );
 define( 'COINSNAP_VERSION', '1.0.0' );
-define( 'COINSNAP_REFERRAL_CODE', '' );
+define( 'COINSNAP_REFERRAL_CODE', 'D19824' );
 define( 'COINSNAP_PLUGIN_ID', 'coinsnap-for-wpforms' );
 define( 'COINSNAP_SERVER_URL', 'https://app.coinsnap.io' );
 define( 'WPFORMS_COINSNAP_PATH', plugin_dir_path( WPFORMS_COINSNAP_FILE ) );
