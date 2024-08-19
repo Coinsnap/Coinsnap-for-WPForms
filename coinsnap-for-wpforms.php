@@ -9,8 +9,9 @@
  * Text Domain:     coinsnap-for-wpforms
  * Domain Path:     /languages
  * Requires PHP:    7.4
- * Tested up to:    6.4.3
+ * Tested up to:    6.6.1
  * Requires at least: 5.2
+ * WPForms tested up to: 1.9.0.2
  * License:         GPL2
  * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -37,7 +38,7 @@ define( 'WPFORMS_COINSNAP_URL', plugin_dir_url( WPFORMS_COINSNAP_FILE ) );
 add_action( 'wpforms_loaded', 'wpforms_coinsnap' );
 
 function wpforms_coinsnap() {
-	require_once WPFORMS_COINSNAP_PATH . '/library/autoload.php';	
-	require_once WPFORMS_COINSNAP_PATH . '/src/Plugin.php';	
-	return Plugin::get_instance();
+    require_once WPFORMS_COINSNAP_PATH . '/library/loader.php';	
+    require_once WPFORMS_COINSNAP_PATH . '/src/Plugin.php';	
+    return Plugin::get_instance();
 }

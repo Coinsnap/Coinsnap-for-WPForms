@@ -220,7 +220,7 @@ class Plugin extends WPForms_Payment {
 				
         if (! $this->webhookExists($this->getStoreId(), $this->getApiKey(), $webhook_url)){
             if (! $this->registerWebhook($this->getStoreId(), $this->getApiKey(),$webhook_url)) {                
-                throw new PaymentGatewayException(__('unable to set Webhook url.', 'give-coinsnap'));
+                throw new PaymentGatewayException(esc_html('Unable to set Webhook url.', 'give-coinsnap'));
                 exit;
             }
          }      
@@ -357,67 +357,54 @@ class Plugin extends WPForms_Payment {
 	}
 
 	
-	public function process_webhook() { 
-
-
-		if ( ! isset( $_GET['wpforms-listener'] ) || $_GET['wpforms-listener'] !== 'coinsnap' ) {
+    public function process_webhook(){
+        if ( null !== filter_input(INPUT_GET,'wpforms-listener') || filter_input(INPUT_GET,'wpforms-listener') !== 'coinsnap' ) {
             return;
         }
 
-      	$notify_json = file_get_contents('php://input');        
-		$form_id = $_GET['form-id'];		
+        $notify_json = file_get_contents('php://input');        
+        $form_id = filter_input(INPUT_GET,'form-id');		
 
-		$this->form_data = wpforms()->get( 'form' )->get(
-			$form_id,
-			[
-				'content_only' => true,
-			]
-		);
+        $this->form_data = wpforms()->get( 'form' )->get($form_id,['content_only' => true,]);
+        $payment_settings = $this->form_data['payments'][ $this->slug ];		
+        $this->payment_settings = $payment_settings;
 
-		$payment_settings = $this->form_data['payments'][ $this->slug ];		
-		$this->payment_settings = $payment_settings;
-
-		
-		$notify_ar = json_decode($notify_json, true);
-		$invoice_id = $notify_ar['invoiceId'];        
+	$notify_ar = json_decode($notify_json, true);
+        $invoice_id = $notify_ar['invoiceId'];        
 			
-		try {
-			$client = new \Coinsnap\Client\Invoice( $this->getApiUrl(), $this->getApiKey() );			
-			$csinvoice = $client->getInvoice($this->getStoreId(), $invoice_id);
-			$status = $csinvoice->getData()['status'] ;
-			$entry_id = $csinvoice->getData()['orderId'] ;				
-		
-		}catch (\Throwable $e) {													
-				echo "Error";
-				exit;
-		}
+        try {
+            $client = new \Coinsnap\Client\Invoice( $this->getApiUrl(), $this->getApiKey() );			
+            $csinvoice = $client->getInvoice($this->getStoreId(), $invoice_id);
+            $status = $csinvoice->getData()['status'] ;
+            $entry_id = $csinvoice->getData()['orderId'] ;				
+        }
+        catch (\Throwable $e) {													
+            echo "Error";
+            exit;
+        }
 	
-		
-		$payment         = wpforms()->get( 'payment' )->get_by( 'entry_id', $entry_id );
+	$payment = wpforms()->get( 'payment' )->get_by( 'entry_id', $entry_id );
+        $this->form_data = wpforms()->get( 'form' )->get($payment->form_id,['content_only' => true,]);
 
-		$this->form_data = wpforms()->get( 'form' )->get(
-			$payment->form_id,
-			[
-				'content_only' => true,
-			]
-		);
-
-		// If payment or form doesn't exist, bail.
-		if ( empty( $payment ) || empty( $this->form_data ) ) {
-			return;
-		}
+        // If payment or form doesn't exist, bail.
+        if ( empty( $payment ) || empty( $this->form_data ) ) {
+            return;
+        }
 
 
-		$order_status = 'pending';        
-		
-
+        $order_status = 'pending';
         
-        if ($status == 'Expired') $order_status = $this->payment_settings['expired_status'];
-        else if ($status == 'Processing') $order_status = $this->payment_settings['processing_status'];
-        else if ($status == 'Settled') $order_status = $this->payment_settings['settled_status'];		
+        if ($status == 'Expired'){
+            $order_status = $this->payment_settings['expired_status'];
+        }
+        else if($status == 'Processing'){
+            $order_status = $this->payment_settings['processing_status'];
+        }
+        else if($status == 'Settled'){
+            $order_status = $this->payment_settings['settled_status'];
+        }	
 
-		
-		$this->update_payment(
+        $this->update_payment(
 			$payment->id,
 			[
 				'status'         => $order_status,
@@ -425,16 +412,16 @@ class Plugin extends WPForms_Payment {
 			]
 		);
 
-		$this->add_payment_log(
+        $this->add_payment_log(
 			$payment->id,
 			sprintf(
 				'Coinsnap payment status :'.$status.'. (Invoice ID: '.$invoice_id.')',				
 			)
 		);
 		
-		echo "OK";
-		exit;
-	}
+        echo "OK";
+        exit;
+    }
 
 
 	private function update_payment( $payment_id, $data = [] ) {
