@@ -358,7 +358,7 @@ class Plugin extends WPForms_Payment {
 
 	
     public function process_webhook(){
-        if ( null !== filter_input(INPUT_GET,'wpforms-listener') || filter_input(INPUT_GET,'wpforms-listener') !== 'coinsnap' ) {
+        if ( null === filter_input(INPUT_GET,'wpforms-listener') || filter_input(INPUT_GET,'wpforms-listener') !== 'coinsnap' ) {
             return;
         }
 
