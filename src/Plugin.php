@@ -1,6 +1,10 @@
 <?php
 namespace WPFormsCoinsnap;
 
+if (!defined( 'ABSPATH' )){
+    exit;
+}
+
 use WP_Post;
 use WPForms_Builder_Panel_Settings;
 use WPForms_Payment;

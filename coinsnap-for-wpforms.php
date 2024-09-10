@@ -11,7 +11,7 @@
  * Requires PHP:    7.4
  * Tested up to:    6.6.1
  * Requires at least: 5.2
- * WPForms tested up to: 1.9.0.2
+ * WPForms tested up to: 1.9.0.4
  * License:         GPL2
  * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
  *
