@@ -9,7 +9,7 @@
  * Text Domain:     coinsnap-for-wpforms
  * Domain Path:     /languages
  * Requires PHP:    7.4
- * Tested up to:    6.6.1
+ * Tested up to:    6.6.2
  * Requires at least: 5.2
  * WPForms tested up to: 1.9.0.4
  * License:         GPL2
