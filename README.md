@@ -34,7 +34,7 @@ Coinsnap’s payment plugin for WPForms makes it amazingly simple for your custo
 
 Would you like to give your visitors the option to make payments directly via your WordPress forms? WPForms plugin makes it easy for you to accept payments on your website via PayPal, Stripe, Square or Authorize.Net. And with [Coinsnap](https://coinsnap.io/en/) for WPForms you can also accept Bitcoin and Lightning payments via Coinsnap payment gateway https://app.coinsnap.io/.
 
-![Manual plugin installation](https://github.com/Coinsnap/Coinsnap-for-WPForms/blob/main/assets/images/5.png)
+![WPForms donation form](https://github.com/Coinsnap/Coinsnap-for-WPForms/blob/main/assets/images/5.png)
 
 To do this, you need the installed and configured WPForms plugin (https://wpforms.com/) on your WordPress site, enter Pro license key in WPForms settings form. Additionally you need to install Coinsnap add-on for WPForms.
 
@@ -107,7 +107,7 @@ After successful installation, click Activate and then you can start setting up 
 
 ### 1.1. Add plugin ###
 
-![Plugin downloading from Github repository](https://github.com/Coinsnap/Coinsnap-for-WPForms/blob/main/assets/images/3.png)
+![Plugin downloading from Github repository](https://github.com/Coinsnap/Coinsnap-for-WPForms/blob/main/assets/images/3.jpg)
 
 If you don’t want to install add-on directly via plugin, you can download Coinsnap WP Forms plug-in from Coinsnap Github page or from WordPress directory and install it via “Upload Plugin” function:
 
@@ -115,15 +115,13 @@ Navigate to Plugins > Add Plugins > Upload Plugin and Select zip-archive downloa
 
 Click “Install now” and Coinsnap WPForms plug-in will be installed in WordPress.
 
-![Plugin downloading from Github repository](https://github.com/Coinsnap/Coinsnap-for-WPForms/blob/main/assets/images/4.png)
+![Manual plugin installation](https://github.com/Coinsnap/Coinsnap-for-WPForms/blob/main/assets/images/4.png)
 
 After you have successfully installed the plugin, you can proceed with the connection to Coinsnap payment gateway.
 
 ### 1.2. Configure Coinsnap WPForms plug-in ###
 
 After the Coinsnap WPForms plug-in is installed and activated, a notice appears that the plugin still needs to be configured.
-
-![Manual plugin installation](https://github.com/Coinsnap/Coinsnap-for-WPForms/blob/main/assets/images/5.png)
 
 ### 1.3. Deposit Coinsnap data ###
 
