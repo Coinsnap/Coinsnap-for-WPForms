@@ -13,53 +13,119 @@ use WPForms\Db\Payments\ValueValidator;
 
 class Plugin extends WPForms_Payment {
 
-	
-	private $allowed_to_process = false;
-
-	
-	private $amount = '';		
-	private $payment_settings = [];
-
-	public const WEBHOOK_EVENTS = ['New','Expired','Settled','Processing'];	 
-
-	
-	public static function get_instance() {
-
-		static $instance;
-
-		if ( ! $instance ) {
-			$instance = new self();
-		}
-
-		return $instance;
+    private $allowed_to_process = false;
+    private $amount = '';		
+    private $payment_settings = [];
+    public const WEBHOOK_EVENTS = ['New','Expired','Settled','Processing'];	 
+        
+    public static function get_instance() {
+        static $instance;
+        if ( ! $instance ) {
+            $instance = new self();
 	}
+        return $instance;
+    }
 
-	
-	public function init() {
+    public function init() {
+        $this->version  = COINSNAP_VERSION;
+        $this->name     = 'Coinsnap';
+        $this->slug     = 'coinsnap';
+        $this->priority = 10;
+        $this->icon     = COINSNAP_WPFORMS_URL . 'assets/images/coinsnap_logo.png';
+        $this->hooks();
+    }
 
-		
-		$this->version  = WPFORMS_COINSNAP_VERSION;
-		$this->name     = 'Coinsnap';
-		$this->slug     = 'coinsnap';
-		$this->priority = 10;
-		$this->icon     = WPFORMS_COINSNAP_URL . 'assets/images/coinsnap_logo.png';
-
-		$this->hooks();
-	}
-
-	
-	private function hooks() {
+    private function hooks() {
 
 		add_action( 'wpforms_process', [ $this, 'process_entry' ], 10, 3 );
 		add_action( 'wpforms_process_complete', [ $this, 'process_payment' ], 20, 4 );
 		add_filter( 'wpforms_forms_submission_prepare_payment_data', [ $this, 'prepare_payment_data' ], 10, 3 );
 		add_filter( 'wpforms_forms_submission_prepare_payment_meta', [ $this, 'prepare_payment_meta' ], 10, 3 );
 		add_action( 'wpforms_process_payment_saved', [ $this, 'process_payment_saved' ], 10, 3 );
-		add_action( 'init', [ $this, 'process_webhook' ] );						
-		
+                add_action('admin_notices', array($this, 'coinsnap_notice'));
+                add_action( 'admin_enqueue_scripts', [ $this, 'enqueueCoinsnapCSS'], 25 );
+		add_action( 'init', [ $this, 'process_webhook' ] );	
+                
 	}
+        
+        public function enqueueCoinsnapCSS(): void {
+            wp_enqueue_style( 'CoinsnapPayment', COINSNAP_WPFORMS_URL . 'assets/css/coinsnap-style.css',array(),COINSNAP_VERSION );
+        }
 
-	
+	public function coinsnap_notice(){
+        
+        $page = (filter_input(INPUT_GET,'page',FILTER_SANITIZE_FULL_SPECIAL_CHARS ) !== null)? filter_input(INPUT_GET,'page',FILTER_SANITIZE_FULL_SPECIAL_CHARS ) : '';
+        
+        if($page === 'wpforms-builder'){
+            
+            if(isset($this->form_data['payments'])){
+                $payment_settings = $this->form_data['payments'][ $this->slug ];
+                $this->payment_settings = $payment_settings;
+
+                $coinsnap_url = $this->getApiUrl();
+                $coinsnap_api_key = $this->getApiKey();
+                $coinsnap_store_id = $this->getStoreId();
+                $coinsnap_webhook_url = $this->get_webhook_url();
+            }
+            
+            else {
+                $coinsnap_url = '';
+                $coinsnap_store_id = '';
+                $coinsnap_api_key = '';
+                $coinsnap_webhook_url = '';
+            }
+            
+            echo '<div class="coinsnap-notices">';
+            
+                
+                if(empty($coinsnap_store_id)){
+                    echo '<div class="notice notice-error"><p>';
+                    esc_html_e('Coinsnap Store ID is not set', 'coinsnap-for-wpforms');
+                    echo '</p></div>';
+                }
+
+                if(empty($coinsnap_api_key)){
+                    echo '<div class="notice notice-error"><p>';
+                    esc_html_e('Coinsnap API Key is not set', 'coinsnap-for-wpforms');
+                    echo '</p></div>';
+                }
+                
+                if(!empty($coinsnap_api_key) && !empty($coinsnap_store_id)){
+                    $client = new \Coinsnap\Client\Store($coinsnap_url, $coinsnap_api_key);
+                    $store = $client->getStore($coinsnap_store_id);
+                    if ($store['code'] === 200) {
+                        echo '<div class="notice notice-success"><p>';
+                        esc_html_e('Established connection to Coinsnap Server', 'coinsnap-for-wpforms');
+                        echo '</p></div>';
+                        
+                        if ( ! $this->webhookExists( $coinsnap_store_id, $coinsnap_api_key, $coinsnap_webhook_url ) ) {
+                            if ( ! $this->registerWebhook( $coinsnap_store_id, $coinsnap_api_key, $coinsnap_webhook_url ) ) {
+                                echo '<div class="notice notice-error"><p>';
+                                esc_html_e('Unable to create webhook on Coinsnap Server', 'coinsnap-for-wpforms');
+                                echo '</p></div>';
+                            }
+                            else {
+                                echo '<div class="notice notice-success"><p>';
+                                esc_html_e('Successfully registered a new webhook on Coinsnap Server', 'coinsnap-for-wpforms');
+                                echo '</p></div>';
+                            }
+                        }
+                        else {
+                            echo '<div class="notice notice-info"><p>';
+                            esc_html_e('Webhook already exists, skipping webhook creation', 'coinsnap-for-wpforms');
+                            echo '</p></div>';
+                        }
+                    }
+                    else {
+                        echo '<div class="notice notice-error"><p>';
+                        esc_html_e('Coinsnap connection error:', 'coinsnap-for-wpforms');
+                        echo esc_html($store['result']['message']);
+                        echo '</p></div>';
+                    }
+                }
+                echo '</div>';
+        }
+    }
 
 	public function builder_content() {
 		$statuses = ValueValidator::get_allowed_one_time_statuses();
@@ -70,7 +136,7 @@ class Plugin extends WPForms_Payment {
 			$this->slug,
 			'enable',
 			$this->form_data,
-			esc_html__( 'Enable Coinsnap payments', 'wpforms-coinsnap' ),
+			esc_html__( 'Enable Coinsnap payments', 'coinsnap-for-wpforms' ),
 			[
 				'parent'  => 'payments',
 				'default' => '0',
@@ -84,10 +150,10 @@ class Plugin extends WPForms_Payment {
 			$this->slug,
 			'store_id',
 			$this->form_data,
-			esc_html__( 'Store Id', 'wpforms-coinsnap' ),
+			esc_html__( 'Store Id', 'coinsnap-for-wpforms' ),
 			[
 				'parent'  => 'payments',
-				'tooltip' => esc_html__( 'Enter Your Coinsnap Store ID', 'wpforms-coinsnap' ),
+				'tooltip' => esc_html__( 'Enter Your Coinsnap Store ID', 'coinsnap-for-wpforms' ),
 			]
 		);		
 		wpforms_panel_field(
@@ -95,10 +161,10 @@ class Plugin extends WPForms_Payment {
 			$this->slug,
 			'api_key',
 			$this->form_data,
-			esc_html__( 'API Key', 'wpforms-coinsnap' ),
+			esc_html__( 'API Key', 'coinsnap-for-wpforms' ),
 			[
 				'parent'  => 'payments',
-				'tooltip' => esc_html__( 'Enter Your Coinsnap API Key', 'wpforms-coinsnap' ),
+				'tooltip' => esc_html__( 'Enter Your Coinsnap API Key', 'coinsnap-for-wpforms' ),
 			]
 		);		
 
@@ -109,12 +175,12 @@ class Plugin extends WPForms_Payment {
 			$this->slug,
 			'expired_status',
 			$this->form_data,
-			esc_html__( 'Expired Status', 'wpforms-coinsnap' ),
+			esc_html__( 'Expired Status', 'coinsnap-for-wpforms' ),
 			[
 				'parent'  => 'payments',
 				'default' => 'failed',
 				'options' => $statuses,
-				'tooltip' => esc_html__( 'Select Expired Status', 'wpforms-coinsnap' ),
+				'tooltip' => esc_html__( 'Select Expired Status', 'coinsnap-for-wpforms' ),
 			]
 		);
 
@@ -123,12 +189,12 @@ class Plugin extends WPForms_Payment {
 			$this->slug,
 			'settled_status',
 			$this->form_data,
-			esc_html__( 'Settled Status', 'wpforms-coinsnap' ),
+			esc_html__( 'Settled Status', 'coinsnap-for-wpforms' ),
 			[
 				'parent'  => 'payments',
 				'default' => 'completed',
 				'options' => $statuses,
-				'tooltip' => esc_html__( 'Select Settled Status', 'wpforms-coinsnap' ),
+				'tooltip' => esc_html__( 'Select Settled Status', 'coinsnap-for-wpforms' ),
 			]
 		);
 
@@ -137,12 +203,12 @@ class Plugin extends WPForms_Payment {
 			$this->slug,
 			'processing_status',
 			$this->form_data,
-			esc_html__( 'Processing Status', 'wpforms-coinsnap' ),
+			esc_html__( 'Processing Status', 'coinsnap-for-wpforms' ),
 			[
 				'parent'  => 'payments',
 				'default' => 'processed',
 				'options' => $statuses,
-				'tooltip' => esc_html__( 'Select Processing Status', 'wpforms-coinsnap' ),
+				'tooltip' => esc_html__( 'Select Processing Status', 'coinsnap-for-wpforms' ),
 			]
 		);
 		
@@ -173,7 +239,7 @@ class Plugin extends WPForms_Payment {
 		$entry_has_paymemts = wpforms_has_payment( 'entry', $fields );
 
 		if ( ! $form_has_payments || ! $entry_has_paymemts ) {
-			$error_title = esc_html__( 'Coinsnap Payment stopped, missing payment fields', 'wpforms-coinsnap' );
+			$error_title = esc_html__( 'Coinsnap Payment stopped, missing payment fields', 'coinsnap-for-wpforms' );
 			$errors[]    = $error_title;
 
 			$this->log_errors( $error_title );
@@ -182,7 +248,7 @@ class Plugin extends WPForms_Payment {
 			$this->amount = wpforms_get_total_payment( $fields );
 
 			if ( empty( $this->amount ) || $this->amount === wpforms_sanitize_amount( 0 ) ) {
-				$error_title = esc_html__( 'Coinsnap Payment stopped, invalid/empty amount', 'wpforms-coinsnap' );
+				$error_title = esc_html__( 'Coinsnap Payment stopped, invalid/empty amount', 'coinsnap-for-wpforms' );
 				$errors[]    = $error_title;
 
 				$this->log_errors( $error_title );
@@ -224,7 +290,7 @@ class Plugin extends WPForms_Payment {
 				
         if (! $this->webhookExists($this->getStoreId(), $this->getApiKey(), $webhook_url)){
             if (! $this->registerWebhook($this->getStoreId(), $this->getApiKey(),$webhook_url)) {                
-                throw new PaymentGatewayException(esc_html('Unable to set Webhook url.', 'give-coinsnap'));
+                throw new PaymentGatewayException(esc_html('Unable to set Webhook url.', 'coinsnap-for-wpforms'));
                 exit;
             }
          }      
@@ -276,7 +342,7 @@ class Plugin extends WPForms_Payment {
         $camount = \Coinsnap\Util\PreciseNumber::parseFloat($amount,2);
 								
         $csinvoice = $client->createInvoice(
-				    $this->getStoreId(),  
+				$this->getStoreId(),  
 			    	strtoupper( wpforms_get_currency() ),
 			    	$camount,
 			    	$invoice_no,
@@ -362,12 +428,12 @@ class Plugin extends WPForms_Payment {
 
 	
     public function process_webhook(){
-        if ( null === filter_input(INPUT_GET,'wpforms-listener') || filter_input(INPUT_GET,'wpforms-listener') !== 'coinsnap' ) {
+        if ( null === filter_input(INPUT_GET,'wpforms-listener',FILTER_SANITIZE_FULL_SPECIAL_CHARS) || filter_input(INPUT_GET,'wpforms-listener',FILTER_SANITIZE_FULL_SPECIAL_CHARS) !== 'coinsnap' ) {
             return;
         }
 
         $notify_json = file_get_contents('php://input');        
-        $form_id = filter_input(INPUT_GET,'form-id');		
+        $form_id = filter_input(INPUT_GET,'form-id',FILTER_VALIDATE_INT);		
 
         $this->form_data = wpforms()->get( 'form' )->get($form_id,['content_only' => true,]);
         $payment_settings = $this->form_data['payments'][ $this->slug ];		
@@ -445,27 +511,28 @@ class Plugin extends WPForms_Payment {
 	}
 
 
-	private function get_customer($form_data, $entry)
-    {
+	private function get_customer($form_data, $entry){
         $name = '';
         $email = '';
         $phone = '';
         if (!empty($form_data) && !empty($entry)) {
-            foreach ($form_data['fields'] as $num => $arr) {
+            foreach ($form_data['fields'] as $num => $arr){
                 switch ($arr['type']) {
                     case 'name':
-                        if ('simple' === $arr['format']) {
+                        if ('simple' === $arr['format']){
                             $name = $entry['fields'][$arr['id']];
-                        } elseif ('first-last' === $arr['format']) {
+                        }
+                        elseif ('first-last' === $arr['format']){
                             $name = '';
-                            if (isset($entry['fields'][$arr['id']]['first'])) {
+                            if (isset($entry['fields'][$arr['id']]['first'])){
                                 $name = $entry['fields'][$arr['id']]['first'];
                             }
 
                             if (isset($entry['fields'][$arr['id']]['last'])) {
                                 $name .= ' '.$entry['fields'][$arr['id']]['last'];
                             }
-                        } elseif ('first-middle-last' === $arr['format']) {
+                        }
+                        elseif ('first-middle-last' === $arr['format']) {
                             $name = '';
                             if (isset($entry['fields'][$arr['id']]['first'])) {
                                 $name = $entry['fields'][$arr['id']]['first'];
@@ -514,10 +581,8 @@ class Plugin extends WPForms_Payment {
         try {		
             $whClient = new \Coinsnap\Client\Webhook( $this->getApiUrl(), $apiKey );		
             $Webhooks = $whClient->getWebhooks( $storeId );
-			
             
             foreach ($Webhooks as $Webhook){					
-                //self::deleteWebhook($storeId,$apiKey, $Webhook->getData()['id']);
                 if ($Webhook->getData()['url'] == $webhook) return true;	
             }
         }catch (\Throwable $e) {			

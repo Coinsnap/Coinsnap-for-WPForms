@@ -1,0 +1,5 @@
+.coinsnap-notices {position:fixed; right:30px; bottom:30px; width:260px; padding:15px; z-index:100200; background: rgba(255,255,255,0.5)}
+.coinsnap-notices .notice {background:#FFFFFF; box-shadow: 0 1px 1px rgba(0,0,0,.04); padding: 1px 12px; margin:5px 0 15px;}
+.coinsnap-notices .notice-info {border-left:solid 4px #72aee6; }
+.coinsnap-notices .notice-success {border-left:solid 4px #00a32a; }
+.coinsnap-notices .notice-error {border-left:solid 4px #d63638; }
