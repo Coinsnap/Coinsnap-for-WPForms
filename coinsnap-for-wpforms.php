@@ -9,9 +9,9 @@
  * Text Domain:     coinsnap-for-wpforms
  * Domain Path:     /languages
  * Requires PHP:    7.4
- * Tested up to:    6.7
+ * Tested up to:    6.7.1
  * Requires at least: 5.2
- * WPForms tested up to: 1.9.2.1
+ * WPForms tested up to: 1.9.2.2
  * License:         GPL2
  * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -26,7 +26,6 @@ use WPFormsCoinsnap\Plugin;
 
 const WPFORMS_COINSNAP_FILE = __FILE__;
 
-if(!defined('SERVER_PHP_VERSION')){ define( 'SERVER_PHP_VERSION', '7.4' ); }
 if(!defined('COINSNAP_VERSION')){ define( 'COINSNAP_VERSION', '1.0.0' ); }
 if(!defined('COINSNAP_REFERRAL_CODE')){ define( 'COINSNAP_REFERRAL_CODE', 'D19824' ); }
 if(!defined('COINSNAP_PLUGIN_ID')){ define( 'COINSNAP_PLUGIN_ID', 'coinsnap-for-wpforms' ); }
