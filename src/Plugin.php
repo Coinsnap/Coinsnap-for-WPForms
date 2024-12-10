@@ -349,7 +349,7 @@ class Plugin extends WPForms_Payment {
 			    	$buyerEmail,
 			    	$buyerName, 
 			    	$return_url,
-			    	COINSNAP_REFERRAL_CODE,     
+			    	COINSNAP_WPFORMS_REFERRAL_CODE,     
 			    	$metadata,
 			    	$checkoutOptions
 		    	);

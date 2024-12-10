@@ -3,7 +3,7 @@
  * Plugin Name:     Coinsnap Add-On for WPForms
  * Plugin URI:      https://www.coinsnap.io
  * Description:     Provides a <a href="https://coinsnap.io">Coinsnap</a>  - Bitcoin + Lightning Payment Gateway for WPForms.
- * Version:         1.0.0
+ * Version:         1.0.1
  * Author:          Coinsnap
  * Author URI:      https://coinsnap.io/
  * Text Domain:     coinsnap-for-wpforms
@@ -26,8 +26,8 @@ use WPFormsCoinsnap\Plugin;
 
 const WPFORMS_COINSNAP_FILE = __FILE__;
 
-if(!defined('COINSNAP_VERSION')){ define( 'COINSNAP_VERSION', '1.0.0' ); }
-if(!defined('COINSNAP_REFERRAL_CODE')){ define( 'COINSNAP_REFERRAL_CODE', 'D19824' ); }
+if(!defined('COINSNAP_WPFORMS_VERSION')){ define( 'COINSNAP_WPFORMS_VERSION', '1.0.1' ); }
+if(!defined('COINSNAP_WPFORMS_REFERRAL_CODE')){ define( 'COINSNAP_WPFORMS_REFERRAL_CODE', 'D19824' ); }
 if(!defined('COINSNAP_PLUGIN_ID')){ define( 'COINSNAP_PLUGIN_ID', 'coinsnap-for-wpforms' ); }
 if(!defined('COINSNAP_SERVER_URL')){ define( 'COINSNAP_SERVER_URL', 'https://app.coinsnap.io' ); }
 if(!defined('COINSNAP_WPFORMS_PATH')){ define( 'COINSNAP_WPFORMS_PATH', plugin_dir_path( WPFORMS_COINSNAP_FILE ) ); }
