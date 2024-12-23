@@ -27,7 +27,7 @@ class Plugin extends WPForms_Payment {
     }
 
     public function init() {
-        $this->version  = COINSNAP_VERSION;
+        $this->version  = COINSNAP_WPFORMS_VERSION;
         $this->name     = 'Coinsnap';
         $this->slug     = 'coinsnap';
         $this->priority = 10;
@@ -49,7 +49,7 @@ class Plugin extends WPForms_Payment {
 	}
         
         public function enqueueCoinsnapCSS(): void {
-            wp_enqueue_style( 'CoinsnapPayment', COINSNAP_WPFORMS_URL . 'assets/css/coinsnap-style.css',array(),COINSNAP_VERSION );
+            wp_enqueue_style( 'CoinsnapPayment', COINSNAP_WPFORMS_URL . 'assets/css/coinsnap-style.css',array(),COINSNAP_WPFORMS_VERSION );
         }
 
 	public function coinsnap_notice(){
