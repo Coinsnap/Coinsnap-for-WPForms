@@ -1,4 +1,4 @@
-=== Coinsnap Add-On for WPForms ===
+=== Bitcoin payment for WPForms ===
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, WPForms, payment gateway
 Requires at least: 5.2
@@ -8,7 +8,7 @@ Stable tag: 1.0.2
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Bitcoin and Lightning payment processing with the Coinsnap add-on for WPForms Wordpress plug-in.
+Sell products, downloads, bookings for Bitcoin or get Bitcoin-donations in any form you created with WPForms! Easy setup, fast & simple transactions.
 
 == Description ==
 
