@@ -80,13 +80,13 @@ class Plugin extends WPForms_Payment {
                 
                 if(empty($coinsnap_store_id)){
                     echo '<div class="notice notice-error"><p>';
-                    esc_html_e('Coinsnap Store ID is not set', 'coinsnap-for-wpforms');
+                    esc_html_e('WP Forms: Coinsnap Store ID is not set', 'coinsnap-for-wpforms');
                     echo '</p></div>';
                 }
 
                 if(empty($coinsnap_api_key)){
                     echo '<div class="notice notice-error"><p>';
-                    esc_html_e('Coinsnap API Key is not set', 'coinsnap-for-wpforms');
+                    esc_html_e('WP Forms: Coinsnap API Key is not set', 'coinsnap-for-wpforms');
                     echo '</p></div>';
                 }
                 
@@ -95,30 +95,30 @@ class Plugin extends WPForms_Payment {
                     $store = $client->getStore($coinsnap_store_id);
                     if ($store['code'] === 200) {
                         echo '<div class="notice notice-success"><p>';
-                        esc_html_e('Established connection to Coinsnap Server', 'coinsnap-for-wpforms');
+                        esc_html_e('WP Forms: Established connection to Coinsnap Server', 'coinsnap-for-wpforms');
                         echo '</p></div>';
                         
                         if ( ! $this->webhookExists( $coinsnap_store_id, $coinsnap_api_key, $coinsnap_webhook_url ) ) {
                             if ( ! $this->registerWebhook( $coinsnap_store_id, $coinsnap_api_key, $coinsnap_webhook_url ) ) {
                                 echo '<div class="notice notice-error"><p>';
-                                esc_html_e('Unable to create webhook on Coinsnap Server', 'coinsnap-for-wpforms');
+                                esc_html_e('WP Forms: Unable to create webhook on Coinsnap Server', 'coinsnap-for-wpforms');
                                 echo '</p></div>';
                             }
                             else {
                                 echo '<div class="notice notice-success"><p>';
-                                esc_html_e('Successfully registered a new webhook on Coinsnap Server', 'coinsnap-for-wpforms');
+                                esc_html_e('WP Forms: Successfully registered webhook on Coinsnap Server', 'coinsnap-for-wpforms');
                                 echo '</p></div>';
                             }
                         }
                         else {
                             echo '<div class="notice notice-info"><p>';
-                            esc_html_e('Webhook already exists, skipping webhook creation', 'coinsnap-for-wpforms');
+                            esc_html_e('WP Forms: Webhook already exists, skipping webhook creation', 'coinsnap-for-wpforms');
                             echo '</p></div>';
                         }
                     }
                     else {
                         echo '<div class="notice notice-error"><p>';
-                        esc_html_e('Coinsnap connection error:', 'coinsnap-for-wpforms');
+                        esc_html_e('WP Forms: Coinsnap connection error:', 'coinsnap-for-wpforms');
                         echo esc_html($store['result']['message']);
                         echo '</p></div>';
                     }

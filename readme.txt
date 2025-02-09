@@ -1,10 +1,8 @@
 === Bitcoin payment for WPForms ===
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, WPForms, payment gateway
-Requires at least: 5.2
-Tested up to: 6.7.1
-Requires PHP: 7.4
-Stable tag: 1.0.2
+Tested up to: 6.7
+Stable tag: 1.0.3
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -196,3 +194,6 @@ Plugin's page on Coinsnap website: https://coinsnap.io/en/
 = 1.0.2 :: 2024-12-23 =
 * Fixed COINSNAP_WPFORMS_VERSION constant name bug.
 * Fixed mismatch variables types bug in ConnectException function call.
+
+= 1.0.3 :: 2025-02-09 =
+* Update: Coinsnap server connection check indication in backend marks as "WP Forms".
