@@ -1,5 +1,5 @@
 # Coinsnap for WP Forms payment plugin #
-![Coinsnap for WP Forms Add-on](https://resources.coinsnap.org/products/wpforms/images/1.png)
+![Coinsnap for WP Forms Add-on](https://resources.coinsnap.org/products/wpforms/images/banner-772x250.png)
 
 ## Bitcoin and Lightning payments for WP Forms in WordPress ##
 
@@ -30,15 +30,15 @@ Coinsnap’s payment plugin for WPForms makes it amazingly simple for your custo
 
 # Bitcoin and Lightning payments in WPForms Pro with Coinsnap #
 
-![WPForms Plugin for Wordpress](https://resources.coinsnap.org/products/wpforms/images/2.png)
+![WPForms Plugin for Wordpress](https://resources.coinsnap.org/products/wpforms/images/screenshot-2.jpg)
 
 Would you like to give your visitors the option to make payments directly via your WordPress forms? WPForms plugin makes it easy for you to accept payments on your website via PayPal, Stripe, Square or Authorize.Net. And with [Coinsnap](https://coinsnap.io/en/) for WPForms you can also accept Bitcoin and Lightning payments via Coinsnap payment gateway https://app.coinsnap.io/.
 
-![WPForms donation form](https://resources.coinsnap.org/products/wpforms/images/5.png)
+![WPForms donation form](https://resources.coinsnap.org/products/wpforms/images/screenshot-5.png)
 
 To do this, you need the installed and configured WPForms plugin (https://wpforms.com/) on your WordPress site, enter Pro license key in WPForms settings form. Additionally you need to install Coinsnap add-on for WPForms.
 
-![WPForms license key](https://resources.coinsnap.org/products/wpforms/images/6.png)
+![WPForms license key](https://resources.coinsnap.org/products/wpforms/images/screenshot-6.png)
 
 With the Coinsnap Bitcoin Lightning payment processing plugin you can immediately accept Bitcoin Lightning payments on your site. You don’t need your own Lightning node or any other technical requirements.
 
@@ -107,7 +107,7 @@ After successful installation, click Activate and then you can start setting up 
 
 ### 1.1. Add plugin ###
 
-![Plugin downloading from Github repository](https://resources.coinsnap.org/products/wpforms/images/3.jpg)
+![Plugin downloading from Github repository](https://resources.coinsnap.org/products/wpforms/images/screenshot-3.png)
 
 If you don’t want to install add-on directly via plugin, you can download Coinsnap WP Forms plug-in from Coinsnap Github page or from WordPress directory and install it via “Upload Plugin” function:
 
@@ -115,7 +115,7 @@ Navigate to Plugins > Add Plugins > Upload Plugin and Select zip-archive downloa
 
 Click “Install now” and Coinsnap WPForms plug-in will be installed in WordPress.
 
-![Manual plugin installation](https://resources.coinsnap.org/products/wpforms/images/4.png)
+![Manual plugin installation](https://resources.coinsnap.org/products/wpforms/images/screenshot-4.png)
 
 After you have successfully installed the plugin, you can proceed with the connection to Coinsnap payment gateway.
 
@@ -129,13 +129,13 @@ After the Coinsnap WPForms plug-in is installed and activated, a notice appears 
 * Enter Store ID and API Key
 * Click Save
 
-![Coinsnap store settings](https://resources.coinsnap.org/products/wpforms/images/7.png)
+![Coinsnap store settings](https://resources.coinsnap.org/products/wpforms/images/screenshot-7.png)
 
 If you don’t have a Coinsnap account yet, you can do so via the link shown: Coinsnap Registration
 
 ### 2. Create Coinsnap account ####
 
-![Coinsnap register](https://resources.coinsnap.org/products/wpforms/images/8.png)
+![Coinsnap register](https://resources.coinsnap.org/products/wpforms/images/screenshot-8.png)
 
 ### 2.1. Create a Coinsnap Account ####
 
@@ -147,7 +147,7 @@ If you are using a Lightning Wallet with Lightning Login, then you can also open
 
 You will receive an email to the given email address with a confirmation link, which you have to confirm. If you do not find the email, please check your spam folder.
 
-![E-mail address confirmation](https://resources.coinsnap.org/products/wpforms/images/9.png)
+![E-mail address confirmation](https://resources.coinsnap.org/products/wpforms/images/screenshot-9.png)
 
 Then please log in to the Coinsnap backend with the appropriate credentials.
 
@@ -168,7 +168,7 @@ https://coinsnap.io/lightning-wallet-mit-lightning-adresse/
 
 ### 3.1. WPForms Coinsnap Settings ###
 
-![Connect website with Coinsnap](https://resources.coinsnap.org/products/wpforms/images/10.png)
+![Connect website with Coinsnap](https://resources.coinsnap.org/products/wpforms/images/screenshot-10.png)
 
 * Navigate to WPForms > Add or Edit Forms > Payments and select coinsnap
 * Enter Store ID and API Key
@@ -186,7 +186,7 @@ We make a real donation payment in our test WPForms site.
 
 The Bitcoin + Lightning payment page is now displayed, offering the payer the option to pay with Bitcoin or also with Lightning. Both methods are integrated in the displayed QR code.
 
-![QR code on the Bitcoin payment page](https://resources.coinsnap.org/products/wpforms/images/11.png)
+![QR code on the Bitcoin payment page](https://resources.coinsnap.org/products/wpforms/images/screenshot-11.png)
 
 
 # Changelog
