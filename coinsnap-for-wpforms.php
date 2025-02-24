@@ -37,7 +37,7 @@ add_action('wpforms_loaded', 'wpforms_coinsnap' );
 add_action('admin_init', 'check_wpforms_dependency');
 
 function check_wpforms_dependency(){
-    if (!is_plugin_active('wpforms/wpforms.php') || !class_exists('WPForms_Pro')) {
+    if (!is_plugin_active('wpforms/wpforms.php') || !wpforms()->is_pro()) {
         add_action('admin_notices', 'wpforms_dependency_notice');
         deactivate_plugins(plugin_basename(__FILE__));
     }
