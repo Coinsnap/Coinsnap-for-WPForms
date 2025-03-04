@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:     Bitcoin payment for WPForms
- * Plugin URI:      https://www.coinsnap.io
+ * Plugin URI:      https://coinsnap.io/coinsnap-for-wpforms-plugin/
  * Description:     Sell products, downloads, bookings for Bitcoin or get Bitcoin-donations in any form you created with WPForms! Easy setup, fast & simple transactions.
  * Version:         1.0.4
  * Author:          Coinsnap
@@ -11,6 +11,7 @@
  * Requires PHP:    7.4
  * Tested up to:    6.7
  * Requires at least: 5.2
+ * Requires Plugins: wpforms
  * WPForms tested up to: 1.9.4.1
  * License:         GPL2
  * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
