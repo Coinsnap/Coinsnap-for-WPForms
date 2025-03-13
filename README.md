@@ -84,7 +84,7 @@ Coinsnap’s Bitcoin payment plugin for WPForms makes it amazingly simple for yo
 
 # Installation #
 
-= 1. Install the Coinsnap for WPForms plugin from the WordPress plugin repository =
+## 1. Install the Coinsnap for WPForms plugin from the WordPress plugin repository ##
 
 **IMPORTANT NOTE:** Coinsnap for WPForms only works with the WPForms Pro version. So please make sure to update your WPForms to WPForms Pro before you install Coinsnap for WPForms!
 
@@ -99,7 +99,7 @@ Now WordPress will offer you to Activate the pugin – click the button and you 
 Next, you will connect the plugin with your Coinsnap account.
 
 
-= 1.1. WPForms Coinsnap Settings =
+### 1.1. WPForms Coinsnap Settings ###
 
 After you have installed and activated the Coinsnap for WPForms plugin, you need to configure the Coinsnap settings. Go to **WPForms / All Forms** in the black sidebar on the left. Then choose a form in which you want to implement Bitcoin-Lightning payment and click on **edit**.
 
@@ -117,7 +117,7 @@ In the editing space of the chosen WPForms form, open the tab **Payments** on th
 In the next paragraph we show you where to find your Coinsnap Store ID and your Coinsnap API Key.
 
 
-= 1.2. Enter Store ID and API Key in your WPForms Coinsnap Settings =
+### 1.2. Enter Store ID and API Key in your WPForms Coinsnap Settings ###
 
 Go to the **Settings** menu item in your Coinsnap account. Then click on **Store** and you will see your Coinsnap **Store ID** and the Coinsnap **API Key** in the **Store** section.
 
@@ -128,7 +128,7 @@ Click on the “**Save changes**” button at the bottom of the page to apply an
 = YOU ARE SET TO SELL FOR BITCOIN NOW! To be sure all works fine, you should now... =
 
 
-= 1.3. Test the payment method in your WPForms store =
+### 1.3. Test the payment method in your WPForms store ###
 
 ![Test the payment method in your WPForms store](https://resources.coinsnap.org/products/wpforms/images/screenshot-4.png)
 
@@ -145,7 +145,7 @@ The Bitcoin payment page is now displayed and offers the payer the option of pay
 The buyer just needs to scan the QR code with his Bitcoin-Lighting wallet and authorize the payment. He will see the confirmation of his purchase with all details. And the respective Sats have been transferred directly into your (the merchant’s) Bitcoin-Lightning wallet!
 
 
-= 2. Install the Coinsnap WPFormsplugin from our Github page =
+## 2. Install the Coinsnap WPFormsplugin from our Github page ##
 
 If you don’t want to install Coinsnap WPForms plugin directly from your WordPress backend, download the Coinsnap for WPForms plugin from the [Coinsnap Github page here](https://github.com/Coinsnap/Coinsnap-for-WPForms).
 
@@ -156,7 +156,6 @@ Then use the “**Upload plugin**” function to install it. Click on “**Insta
 As soon as the Coinsnap for WPForms plugin is installed and activated, a message will appear asking you to configure the plugin settings.
 
 From here on you can follow 1.1 to 1.3 and you will be set to sell for Bitcoin in no time at all!
-
 
 
 # Changelog
