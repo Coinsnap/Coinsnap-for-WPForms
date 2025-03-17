@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name:     Bitcoin payment for WPForms
- * Plugin URI:      https://www.coinsnap.io
+ * Plugin URI:      https://coinsnap.io/coinsnap-for-wpforms-plugin/
  * Description:     Sell products, downloads, bookings for Bitcoin or get Bitcoin-donations in any form you created with WPForms! Easy setup, fast & simple transactions.
- * Version:         1.0.3
+ * Version:         1.0.4
  * Author:          Coinsnap
  * Author URI:      https://coinsnap.io/
  * Text Domain:     coinsnap-for-wpforms
@@ -11,7 +11,7 @@
  * Requires PHP:    7.4
  * Tested up to:    6.7
  * Requires at least: 5.2
- * WPForms tested up to: 1.9.3.2
+ * WPForms tested up to: 1.9.4.2
  * License:         GPL2
  * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -26,14 +26,29 @@ use WPFormsCoinsnap\Plugin;
 
 const WPFORMS_COINSNAP_FILE = __FILE__;
 
-if(!defined('COINSNAP_WPFORMS_VERSION')){ define( 'COINSNAP_WPFORMS_VERSION', '1.0.3' ); }
+if(!defined('COINSNAP_WPFORMS_VERSION')){ define( 'COINSNAP_WPFORMS_VERSION', '1.0.4' ); }
 if(!defined('COINSNAP_WPFORMS_REFERRAL_CODE')){ define( 'COINSNAP_WPFORMS_REFERRAL_CODE', 'D19824' ); }
 if(!defined('COINSNAP_PLUGIN_ID')){ define( 'COINSNAP_PLUGIN_ID', 'coinsnap-for-wpforms' ); }
 if(!defined('COINSNAP_SERVER_URL')){ define( 'COINSNAP_SERVER_URL', 'https://app.coinsnap.io' ); }
 if(!defined('COINSNAP_WPFORMS_PATH')){ define( 'COINSNAP_WPFORMS_PATH', plugin_dir_path( WPFORMS_COINSNAP_FILE ) ); }
 if(!defined('COINSNAP_WPFORMS_URL')){ define( 'COINSNAP_WPFORMS_URL', plugin_dir_url( WPFORMS_COINSNAP_FILE ) ); }
 
-add_action( 'wpforms_loaded', 'wpforms_coinsnap' );
+add_action('wpforms_loaded', 'wpforms_coinsnap' );
+add_action('admin_init', 'check_wpforms_dependency');
+
+function check_wpforms_dependency(){
+    if (!is_plugin_active('wpforms/wpforms.php') || !wpforms()->is_pro()) {
+        add_action('admin_notices', 'wpforms_dependency_notice');
+        deactivate_plugins(plugin_basename(__FILE__));
+    }
+}
+
+function wpforms_dependency_notice(){?>
+    <div class="notice notice-error">
+        <p><?php echo esc_html_e('Bitcoin payment for WPForms plugin requires WP Forms to be installed and activated.','coinsnap-for-wpforms'); ?></p>
+    </div>
+    <?php
+}
 
 function wpforms_coinsnap() {
     require_once COINSNAP_WPFORMS_PATH . '/library/loader.php';	

@@ -35,18 +35,17 @@ class Plugin extends WPForms_Payment {
         $this->hooks();
     }
 
-    private function hooks() {
+    private function hooks(){
 
-		add_action( 'wpforms_process', [ $this, 'process_entry' ], 10, 3 );
-		add_action( 'wpforms_process_complete', [ $this, 'process_payment' ], 20, 4 );
-		add_filter( 'wpforms_forms_submission_prepare_payment_data', [ $this, 'prepare_payment_data' ], 10, 3 );
-		add_filter( 'wpforms_forms_submission_prepare_payment_meta', [ $this, 'prepare_payment_meta' ], 10, 3 );
-		add_action( 'wpforms_process_payment_saved', [ $this, 'process_payment_saved' ], 10, 3 );
-                add_action('admin_notices', array($this, 'coinsnap_notice'));
-                add_action( 'admin_enqueue_scripts', [ $this, 'enqueueCoinsnapCSS'], 25 );
-		add_action( 'init', [ $this, 'process_webhook' ] );	
-                
-	}
+        add_action( 'wpforms_process', [ $this, 'process_entry' ], 10, 3 );
+        add_action( 'wpforms_process_complete', [ $this, 'process_payment' ], 20, 4 );
+        add_filter( 'wpforms_forms_submission_prepare_payment_data', [ $this, 'prepare_payment_data' ], 10, 3 );
+	add_filter( 'wpforms_forms_submission_prepare_payment_meta', [ $this, 'prepare_payment_meta' ], 10, 3 );
+	add_action( 'wpforms_process_payment_saved', [ $this, 'process_payment_saved' ], 10, 3 );
+        add_action('admin_notices', array($this, 'coinsnap_notice'));
+        add_action( 'admin_enqueue_scripts', [ $this, 'enqueueCoinsnapCSS'], 25 );
+	add_action( 'init', [ $this, 'process_webhook' ] );
+    }
         
         public function enqueueCoinsnapCSS(): void {
             wp_enqueue_style( 'CoinsnapPayment', COINSNAP_WPFORMS_URL . 'assets/css/coinsnap-style.css',array(),COINSNAP_WPFORMS_VERSION );
