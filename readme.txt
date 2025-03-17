@@ -68,9 +68,9 @@ Coinsnap’s Bitcoin payment plugin for WPForms makes it amazingly simple for yo
 == Documentation: ==
 
 * [Coinsnap API (1.0) documentation](https://docs.coinsnap.io/)
-* [Frequently Asked Questions](https://coinsnap.io/en/faq/) 
-* [Terms and Conditions](https://coinsnap.io/en/general-terms-and-conditions/)
-* [Privacy Policy](https://coinsnap.io/en/privacy/)
+* [Frequently Asked Questions](https://coinsnap.io/faq/) 
+* [Terms and Conditions](https://coinsnap.io/general-terms-and-conditions/)
+* [Privacy Policy](https://coinsnap.io/privacy/)
 
 
 == Installation ==
