@@ -3,14 +3,14 @@
 
 ## Bitcoin and Lightning payments for WP Forms in WordPress ##
 
-# Coinsnap for WPForms 1.0.4 #
+# Coinsnap for WPForms 1.0.5 #
 
 * Contributors: coinsnap
 * Tags: Lightning, Lightning Payment, SATS, Satoshi sats, bitcoin, Wordpress, WP Forms, accept bitcoin, bitcoin plugin, bitcoin payment processor, bitcoin e-commerce, Lightning Network, cryptocurrency, lightning payment processor
 * Requires at least: 5.2
 * Tested up to: 6.7.1
 * Requires PHP: 7.4
-* Stable tag: 1.0.4
+* Stable tag: 1.0.5
 * License: GPL2
 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,20 +160,24 @@ From here on you can follow 1.1 to 1.3 and you will be set to sell for Bitcoin i
 
 # Changelog
 
-##### 1.0.0 :: 2024-03-05 =
+##### 1.0.0 :: 2024-03-05
 * First public release for testing.
 
 ##### 1.0.1 :: 2024-12-10 =
 * Fixed bug in ConnectException handler.
 
-##### 1.0.2 :: 2024-12-23 =
+##### 1.0.2 :: 2024-12-23
 * Fixed COINSNAP_WPFORMS_VERSION constant name bug.
 * Fixed mismatch variables types bug in ConnectException function call.
 
-##### 1.0.3 :: 2025-02-09 =
+##### 1.0.3 :: 2025-02-09
 * Update: Coinsnap server connection check indication in backend marks as "WP Forms".
 
-##### 1.0.4 :: 2025-03-01 =
+##### 1.0.4 :: 2025-03-01
 * Update: Prevented plugin activation with non-installed and non-active WP Forms plugin.
 * Fixed getExceptionByStatusCode() method call status code parameter type.
 * Tested on WP Forms 1.9.4.1.
+
+##### 1.0.5 :: 2025-03-20
+* Fixed: added methods log_errors(), display_errors().
+* Fixed: added webhook with empty invoice Id handler.

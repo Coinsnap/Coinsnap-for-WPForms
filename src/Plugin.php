@@ -35,18 +35,17 @@ class Plugin extends WPForms_Payment {
         $this->hooks();
     }
 
-    private function hooks() {
+    private function hooks(){
 
-		add_action( 'wpforms_process', [ $this, 'process_entry' ], 10, 3 );
-		add_action( 'wpforms_process_complete', [ $this, 'process_payment' ], 20, 4 );
-		add_filter( 'wpforms_forms_submission_prepare_payment_data', [ $this, 'prepare_payment_data' ], 10, 3 );
-		add_filter( 'wpforms_forms_submission_prepare_payment_meta', [ $this, 'prepare_payment_meta' ], 10, 3 );
-		add_action( 'wpforms_process_payment_saved', [ $this, 'process_payment_saved' ], 10, 3 );
-                add_action('admin_notices', array($this, 'coinsnap_notice'));
-                add_action( 'admin_enqueue_scripts', [ $this, 'enqueueCoinsnapCSS'], 25 );
-		add_action( 'init', [ $this, 'process_webhook' ] );	
-                
-	}
+        add_action( 'wpforms_process', [ $this, 'process_entry' ], 10, 3 );
+        add_action( 'wpforms_process_complete', [ $this, 'process_payment' ], 20, 4 );
+        add_filter( 'wpforms_forms_submission_prepare_payment_data', [ $this, 'prepare_payment_data' ], 10, 3 );
+	add_filter( 'wpforms_forms_submission_prepare_payment_meta', [ $this, 'prepare_payment_meta' ], 10, 3 );
+	add_action( 'wpforms_process_payment_saved', [ $this, 'process_payment_saved' ], 10, 3 );
+        add_action('admin_notices', array($this, 'coinsnap_notice'));
+        add_action( 'admin_enqueue_scripts', [ $this, 'enqueueCoinsnapCSS'], 25 );
+	add_action( 'init', [ $this, 'process_webhook' ] );
+    }
         
         public function enqueueCoinsnapCSS(): void {
             wp_enqueue_style( 'CoinsnapPayment', COINSNAP_WPFORMS_URL . 'assets/css/coinsnap-style.css',array(),COINSNAP_WPFORMS_VERSION );
@@ -263,6 +262,37 @@ class Plugin extends WPForms_Payment {
 
 		$this->allowed_to_process = true;
 	}
+        
+        /**
+	 * Log payment error.
+	 * @param string       $title    Error title.
+	 * @param array|string $messages Error messages.
+	 * @param string       $level    Error level to add to 'payment' error level.
+	 */
+	public function log_errors( $title, $messages = [], $level = 'error' ) {
+
+		wpforms_log(
+			$title,
+			$messages,
+			[
+				'type'    => [ 'payment', $level ],
+				'form_id' => $this->form_data['id'],
+			]
+		);
+	}
+
+	/**
+	 * Display form errors.
+	 * @param array $errors Errors to display.
+	 */
+	public function display_errors( $errors ) {
+
+		if ( ! $errors || ! is_array( $errors ) ) {
+			return;
+		}
+
+		wpforms()->get( 'process' )->errors[ $this->form_data['id'] ]['footer'] = implode( '<br>', $errors );
+	}
 
 	
 	public function process_payment( $fields, $entry, $form_data, $entry_id ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
@@ -440,7 +470,13 @@ class Plugin extends WPForms_Payment {
         $this->payment_settings = $payment_settings;
 
 	$notify_ar = json_decode($notify_json, true);
-        $invoice_id = $notify_ar['invoiceId'];        
+
+        if (!isset($notify_ar['invoiceId'])) {
+            echo "No Coinsnap invoiceId provided, aborting.";
+            exit;
+        }
+        
+        $invoice_id = $notify_ar['invoiceId']; 
 			
         try {
             $client = new \Coinsnap\Client\Invoice( $this->getApiUrl(), $this->getApiKey() );			
