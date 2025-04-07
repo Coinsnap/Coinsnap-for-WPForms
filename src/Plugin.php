@@ -47,11 +47,11 @@ class Plugin extends WPForms_Payment {
 	add_action( 'init', [ $this, 'process_webhook' ] );
     }
         
-        public function enqueueCoinsnapCSS(): void {
+    public function enqueueCoinsnapCSS(): void {
             wp_enqueue_style( 'CoinsnapPayment', COINSNAP_WPFORMS_URL . 'assets/css/coinsnap-style.css',array(),COINSNAP_WPFORMS_VERSION );
-        }
+    }
 
-	public function coinsnap_notice(){
+    public function coinsnap_notice(){
         
         $page = (filter_input(INPUT_GET,'page',FILTER_SANITIZE_FULL_SPECIAL_CHARS ) !== null)? filter_input(INPUT_GET,'page',FILTER_SANITIZE_FULL_SPECIAL_CHARS ) : '';
         
@@ -126,7 +126,7 @@ class Plugin extends WPForms_Payment {
         }
     }
 
-	public function builder_content() {
+    public function builder_content() {
 		$statuses = ValueValidator::get_allowed_one_time_statuses();
 		
 
@@ -167,7 +167,18 @@ class Plugin extends WPForms_Payment {
 			]
 		);		
 
-		
+		wpforms_panel_field(
+			'toggle',
+			$this->slug,
+			'autoredirect',
+			$this->form_data,
+			esc_html__( 'Redirect after payment', 'coinsnap-for-wpforms' ),
+			[
+				'parent'  => 'payments',
+				'default' => '1',
+				'tooltip' => esc_html__( 'Redirect after payment on Thank you page automatically', 'coinsnap-for-wpforms' ),
+			]
+		);
 
 		wpforms_panel_field(
 			'select',
@@ -213,234 +224,207 @@ class Plugin extends WPForms_Payment {
 		
 
 		echo '</div>';
-	}
+    }
 
-	public function process_entry( $fields, $entry, $form_data ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+    public function process_entry( $fields, $entry, $form_data ) {
 
-		$this->form_data = $form_data;
-		$errors          = [];
+        $this->form_data = $form_data;
+        $errors          = [];
 
-		// Check if payment method exists.
-		if ( empty( $this->form_data['payments'][ $this->slug ] ) ) {			
-			return;
-		}
+        // Check if payment method exists.
+        if ( empty( $this->form_data['payments'][ $this->slug ] ) ) { return; }
 
-		// Check required payment settings.
-		$payment_settings = $this->form_data['payments'][ $this->slug ];		
-		$this->payment_settings = $payment_settings;
+        // Check required payment settings.
+        $payment_settings = $this->form_data['payments'][ $this->slug ];		
+        $this->payment_settings = $payment_settings;
 
-		if ( ! empty( wpforms()->get( 'process' )->errors[ $this->form_data['id'] ] ) ) {			
-			return;
-		}
+        if ( ! empty( wpforms()->get( 'process' )->errors[ $this->form_data['id'] ] ) ) {return;}
 
 		
-		$form_has_payments  = wpforms_has_payment( 'form', $this->form_data );
-		$entry_has_paymemts = wpforms_has_payment( 'entry', $fields );
+        $form_has_payments  = wpforms_has_payment( 'form', $this->form_data );
+        $entry_has_paymemts = wpforms_has_payment( 'entry', $fields );
+        $webhook_url = $this->get_webhook_url();
 
-		if ( ! $form_has_payments || ! $entry_has_paymemts ) {
-			$error_title = esc_html__( 'Coinsnap Payment stopped, missing payment fields', 'coinsnap-for-wpforms' );
-			$errors[]    = $error_title;
-
-			$this->log_errors( $error_title );
-		} else {
-			// Check total charge amount.
-			$this->amount = wpforms_get_total_payment( $fields );
-
-			if ( empty( $this->amount ) || $this->amount === wpforms_sanitize_amount( 0 ) ) {
-				$error_title = esc_html__( 'Coinsnap Payment stopped, invalid/empty amount', 'coinsnap-for-wpforms' );
-				$errors[]    = $error_title;
-
-				$this->log_errors( $error_title );
-			}
-		}
-
-		if ( $errors ) {
-			$this->display_errors( $errors );
-
-			return;
-		}
-
-		$this->allowed_to_process = true;
-	}
+        //  If form hasn't payment or entry hasn't payment
+        if ( ! $form_has_payments || ! $entry_has_paymemts ) {
+            $error_title = esc_html__( 'Coinsnap Payment stopped, missing payment fields', 'coinsnap-for-wpforms' );
+            $errors[]    = $error_title;
+            $this->log_errors( $error_title );
+        }
         
-        /**
-	 * Log payment error.
-	 * @param string       $title    Error title.
-	 * @param array|string $messages Error messages.
-	 * @param string       $level    Error level to add to 'payment' error level.
-	 */
-	public function log_errors( $title, $messages = [], $level = 'error' ) {
-
-		wpforms_log(
-			$title,
-			$messages,
-			[
-				'type'    => [ 'payment', $level ],
-				'form_id' => $this->form_data['id'],
-			]
-		);
-	}
-
-	/**
-	 * Display form errors.
-	 * @param array $errors Errors to display.
-	 */
-	public function display_errors( $errors ) {
-
-		if ( ! $errors || ! is_array( $errors ) ) {
-			return;
-		}
-
-		wpforms()->get( 'process' )->errors[ $this->form_data['id'] ]['footer'] = implode( '<br>', $errors );
-	}
-
-	
-	public function process_payment( $fields, $entry, $form_data, $entry_id ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
-
-
-		if ( empty( $entry_id ) || ! $this->allowed_to_process ) {
-			return;
-		}
-
-		// Update the entry type.
-		wpforms()->get( 'entry' )->update(
-			$entry_id,
-			[ 'type' => 'payment' ],
-			'',
-			'',
-			[ 'cap' => false ]
-		);
-
-		$payment_settings = $this->form_data['payments'][ $this->slug ];
-		$this->payment_settings = $payment_settings;
-
-
-		$webhook_url = $this->get_webhook_url();		
-        
-				
-        if (! $this->webhookExists($this->getStoreId(), $this->getApiKey(), $webhook_url)){
+        //  Webhook check
+        elseif (! $this->webhookExists($this->getStoreId(), $this->getApiKey(), $webhook_url)){
             if (! $this->registerWebhook($this->getStoreId(), $this->getApiKey(),$webhook_url)) {                
-                throw new PaymentGatewayException(esc_html('Unable to set Webhook url.', 'coinsnap-for-wpforms'));
-                exit;
+                $error_title = esc_html__('Unable to set Webhook url.', 'coinsnap-for-wpforms');
+                $errors[]    = $error_title;
+                $this->log_errors( $error_title );
             }
-         }      
-				
-		
+         }
+        
+        //  Total amount and currency check
+        else {
+            $this->amount = wpforms_get_total_payment( $fields );
+            $amount = round($this->amount, 2);
+            $currency = strtoupper( wpforms_get_currency() );
+            
+            $client =new \Coinsnap\Client\Invoice($this->getApiUrl(), $this->getApiKey());
+            $checkInvoice = $client->checkPaymentData($amount,strtoupper( $currency ));
+                
+            if($checkInvoice['result'] === false){
+                if($checkInvoice['error'] === 'currencyError'){
+                    $errorMessage = sprintf( 
+                    /* translators: 1: Currency */
+                    esc_html__( 'Currency %1$s is not supported by Coinsnap', 'coinsnap-for-wpforms' ), strtoupper( $currency ));
+                }      
+                elseif($checkInvoice['error'] === 'amountError'){
+                    $errorMessage = sprintf( 
+                    /* translators: 1: Amount, 2: Currency */
+                    esc_html__( 'Invoice amount cannot be less than %1$s %2$s', 'coinsnap-for-wpforms' ), $checkInvoice['min_value'], strtoupper( $currency ));
+                }
+                $error_title = $errorMessage;
+                $errors[]    = $error_title;
+                $this->log_errors( $error_title );
+            }
+        }
 
-		// Build the return URL with hash.
-		$query_args = 'form_id=' . $this->form_data['id'] . '&entry_id=' . $entry_id . '&hash=' . wp_hash( $this->form_data['id'] . ',' . $entry_id );
-		$return_url = is_ssl() ? 'https://' : 'http://';
+	if ( $errors ) {
+            $this->display_errors( $errors );
+            return;
+        }
+        $this->allowed_to_process = true;
+    }
+        
+    /**
+     * Log payment error.
+     * @param string       $title    Error title.
+     * @param array|string $messages Error messages.
+     * @param string       $level    Error level to add to 'payment' error level.
+     */
+    public function log_errors( $title, $messages = [], $level = 'error' ) {
+        wpforms_log(
+            $title,
+            $messages,
+            [
+                'type'    => [ 'payment', $level ],
+		'form_id' => $this->form_data['id'],
+            ]
+	);
+    }
 
-		$server_name = isset( $_SERVER['SERVER_NAME'] ) ?
-			sanitize_text_field( wp_unslash( $_SERVER['SERVER_NAME'] ) ) :
-			'';
-		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ?
-			esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) :
-			'';
+    /**
+     * Display form errors.
+     * @param array $errors Errors to display.
+     */
+    public function display_errors( $errors ) {
+        if ( ! $errors || ! is_array( $errors ) ) { return; }
+        wpforms()->get( 'process' )->errors[ $this->form_data['id'] ]['footer'] = implode( '<br>', $errors );
+    }
+	
+    public function process_payment( $fields, $entry, $form_data, $entry_id ) {
+        
+        if ( empty( $entry_id ) || ! $this->allowed_to_process ) { return; }
 
-		$return_url .= $server_name . $request_uri;
+        // Update the entry type.
+        wpforms()->get( 'entry' )->update($entry_id,[ 'type' => 'payment' ],'','',[ 'cap' => false ]);
 
-		if ( ! empty( $this->form_data['settings']['ajax_submit'] ) && ! empty( $_SERVER['HTTP_REFERER'] ) ) {
-			$return_url = esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) );
-		}
+        $payment_settings = $this->form_data['payments'][ $this->slug ];
+	$this->payment_settings = $payment_settings;
 
-		$return_url = esc_url_raw(
-			add_query_arg(
-				[				
-					'wpforms_return' => base64_encode( $query_args ),
-				],				
-				apply_filters( 'wpforms_coinsnap_return_url', $return_url, $this->form_data ) // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
-			)
-		);
+        // Build the return URL with hash.
+        $query_args = 'form_id=' . $this->form_data['id'] . '&entry_id=' . $entry_id . '&hash=' . wp_hash( $this->form_data['id'] . ',' . $entry_id );
+        $return_url = is_ssl() ? 'https://' : 'http://';
 
-		
-		$invoice_no =  $entry_id;
-		$customer_data = $this->get_customer($form_data, $entry);
+        $server_name = isset( $_SERVER['SERVER_NAME'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_NAME'] ) ) : '';
+        $request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+        $return_url .= $server_name . $request_uri;
 
-		$amount = round($this->amount, 2);
+        if ( ! empty( $this->form_data['settings']['ajax_submit'] ) && ! empty( $_SERVER['HTTP_REFERER'] ) ) {
+            $return_url = esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) );
+        }
+
+        $return_url = esc_url_raw(
+            add_query_arg([				
+                'wpforms_return' => base64_encode( $query_args ),
+                ],				
+                apply_filters( 'wpforms_coinsnap_return_url', $return_url, $this->form_data ) // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
+            )
+	);
+
+	$invoice_no =  $entry_id;
+	$customer_data = $this->get_customer($form_data, $entry);
+
+	$amount = round($this->amount, 2);
+        $currency = strtoupper( wpforms_get_currency() );
+                
+        $client =new \Coinsnap\Client\Invoice($this->getApiUrl(), $this->getApiKey());
+        
         $buyerEmail = $customer_data['email'];				
         $buyerName = $customer_data['name'];        						    	
 
         $metadata = [];
         $metadata['orderNumber'] = $invoice_no;
         $metadata['customerName'] = $buyerName;
-				
 
         $checkoutOptions = new \Coinsnap\Client\InvoiceCheckoutOptions();
         $checkoutOptions->setRedirectURL( $return_url );
-        $client =new \Coinsnap\Client\Invoice($this->getApiUrl(), $this->getApiKey());
+        
         $camount = \Coinsnap\Util\PreciseNumber::parseFloat($amount,2);
+        
+        $redirectAutomatically = ($this->payment_settings['autoredirect'] == 0)? false : true;
+        $walletMessage = '';
 								
         $csinvoice = $client->createInvoice(
-				$this->getStoreId(),  
-			    	strtoupper( wpforms_get_currency() ),
-			    	$camount,
-			    	$invoice_no,
-			    	$buyerEmail,
-			    	$buyerName, 
-			    	$return_url,
-			    	COINSNAP_WPFORMS_REFERRAL_CODE,     
-			    	$metadata,
-			    	$checkoutOptions
-		    	);
-				
+            $this->getStoreId(),  
+            $currency,
+            $camount,
+            $invoice_no,
+            $buyerEmail,
+            $buyerName, 
+            $return_url,
+            COINSNAP_WPFORMS_REFERRAL_CODE,     
+            $metadata,
+            $redirectAutomatically,
+            $walletMessage
+	);		
 		
-        $payurl = $csinvoice->getData()['checkoutLink'] ;
+        $payurl = $csinvoice->getData()['checkoutLink'];
+        wp_redirect( $payurl );
+        exit;
+    }
 
-		wp_redirect( $payurl );
+    public function prepare_payment_data( $payment_data, $fields, $form_data ) {
+        
+        if ( ! $this->allowed_to_process ) {return $payment_data;}
+        $payment_data['status']  = 'pending';
+        $payment_data['gateway'] = sanitize_key( $this->slug );		
+        $payment_data['mode'] = 'live';
+        return $payment_data;
+    }
 
-		exit;
-	}
+    public function prepare_payment_meta( $payment_meta, $fields, $form_data ) {
 
-	
-	public function prepare_payment_data( $payment_data, $fields, $form_data ) {
-		
-		
-		if ( ! $this->allowed_to_process ) {
-			return $payment_data;
-		}
+        if ( ! $this->allowed_to_process ) {return $payment_meta;}
+        $payment_meta['method_type'] = 'Coinsnap';
+        return $payment_meta;
+    }
 
-		$payment_data['status']  = 'pending';
-		$payment_data['gateway'] = sanitize_key( $this->slug );		
-		$payment_data['mode'] = 'live';
+    public function process_payment_saved( $payment_id, $fields, $form_data ) {
 
-		
-		return $payment_data;
-	}
+        $payment = wpforms()->get( 'payment' )->get( $payment_id );
 
-	
-	public function prepare_payment_meta( $payment_meta, $fields, $form_data ) {
+        // If payment is not found
+        if ( ! isset( $payment->id ) || ! $this->allowed_to_process ) {return;}
 
-		
-		if ( ! $this->allowed_to_process ) {
-			return $payment_meta;
-		}
+        $this->add_payment_log(
+            $payment_id,
+            sprintf(
+		'Coinsnap payment created. (Entry ID: %s)',
+		$payment->entry_id
+            )
+	);
+    }
 
-		$payment_meta['method_type'] = 'Coinsnap';
-
-		return $payment_meta;
-	}
-
-	public function process_payment_saved( $payment_id, $fields, $form_data ) {
-
-		$payment = wpforms()->get( 'payment' )->get( $payment_id );
-
-		// If payment is not found, bail.
-		if ( ! isset( $payment->id ) || ! $this->allowed_to_process ) {
-			return;
-		}
-
-		$this->add_payment_log(
-			$payment_id,
-			sprintf(
-				'Coinsnap payment created. (Entry ID: %s)',
-				 $payment->entry_id
-			)
-		);
-	}
-
-	
-	private function add_payment_log( $payment_id, $value ) {
+    private function add_payment_log( $payment_id, $value ) {
 
 		wpforms()->get( 'payment_meta' )->add(
 			[
