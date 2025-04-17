@@ -1,7 +1,7 @@
 === Bitcoin payment for WPForms ===
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, WPForms, payment gateway
-Tested up to: 6.7
+Tested up to: 6.8
 Stable tag: 1.1.0
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html

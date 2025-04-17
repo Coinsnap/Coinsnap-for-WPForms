@@ -8,7 +8,7 @@
 * Contributors: coinsnap
 * Tags: Lightning, Lightning Payment, SATS, Satoshi sats, bitcoin, Wordpress, WP Forms, accept bitcoin, bitcoin plugin, bitcoin payment processor, bitcoin e-commerce, Lightning Network, cryptocurrency, lightning payment processor
 * Requires at least: 5.2
-* Tested up to: 6.7
+* Tested up to: 6.8
 * Requires PHP: 7.4
 * Stable tag: 1.1.0
 * License: GPL2
