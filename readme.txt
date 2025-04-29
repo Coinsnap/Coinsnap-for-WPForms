@@ -2,7 +2,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, WPForms, payment gateway
 Tested up to: 6.8
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -192,3 +192,7 @@ See the FAQ on [https://coinsnap.io/coinsnap-for-wpforms-plugin/](https://coinsn
 * Update: Added option "Redirect after payment automatically".
 * Update: Prevented redirect to payment gateway if payment amount is less than 1 SAT or currency in not supported by Coinsnap.
 * Fixed: Webhook check and creation error exception
+
+= 1.1.1 :: 2025-04-29 =
+* Tested on WP Forms 1.9.5.1.
+* Compatibility with Wordpress 6.8 is tested.
