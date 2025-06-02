@@ -1,5 +1,79 @@
 .coinsnap-notices {position:fixed; right:30px; bottom:30px; width:260px; padding:15px; z-index:100200; background: rgba(255,255,255,0.5)}
-.coinsnap-notices .notice {background:#FFFFFF; box-shadow: 0 1px 1px rgba(0,0,0,.04); padding: 1px 12px; margin:5px 0 15px;}
+.coinsnap-notices .notice {background:#FFFFFF; box-shadow: 0 1px 1px rgba(0,0,0,.04); padding: 1px 12px; margin:5px 0 15px; position:relative;}
 .coinsnap-notices .notice-info {border-left:solid 4px #72aee6; }
 .coinsnap-notices .notice-success {border-left:solid 4px #00a32a; }
 .coinsnap-notices .notice-error {border-left:solid 4px #d63638; }
+.coinsnap-notices .notice button {box-sizing: border-box;}
+.notice-dismiss {
+    position: absolute;
+  top: 0;
+  right: 1px;
+  border: none;
+  margin: 0;
+  padding: 9px;
+  background: 0 0;
+  color: #787c82;
+  cursor: pointer;
+}
+
+.notice-dismiss::before {
+    background: 0 0;
+  color: #787c82;
+  content: "\f153";
+  display: block;
+  font: normal 16px/20px dashicons;
+  height: 20px;
+  text-align: center;
+  width: 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+}
+
+.screen-reader-text {
+    border: 0;
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  word-wrap: normal !important;
+}
+
+.message.success {
+    border-left-color: #00a32a;
+}
+
+#coinsnapConnectionStatus{
+    font-size:1.3em;
+        font-weight: 600;
+        margin-bottom:2em;
+}
+
+#coinsnapConnectionStatus span:before {
+    content:"";
+    border-radius: 50%;
+    display:inline-block;
+    vertical-align: baseline;
+    width:10px; height:10px;
+    margin:0 5px 0 0;
+}
+
+#coinsnapConnectionStatus span.error {
+    color: #d63638;
+}
+
+#coinsnapConnectionStatus span.error:before {
+    background:#d63638;
+}
+
+#coinsnapConnectionStatus span.success {
+    color: #00a32a;
+}
+
+#coinsnapConnectionStatus span.success:before {
+    background:#00a32a;
+}
+

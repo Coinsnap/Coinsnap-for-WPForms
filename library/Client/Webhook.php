@@ -173,7 +173,7 @@ class Webhook extends AbstractClient {
             }
             return $r;
         } else {
-            throw $this->getExceptionByStatusCode(esc_html($method), esc_url($url), esc_html($response->getStatus()), esc_html($response->getBody()));
+            throw $this->getExceptionByStatusCode(esc_html($method), esc_url($url), (int)esc_html($response->getStatus()), esc_html($response->getBody()));
         }
     }
 }
