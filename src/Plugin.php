@@ -358,7 +358,9 @@ class Plugin extends WPForms_Payment {
                         $store = $client->getStore($coinsnap_store_id);
                     }
                     catch (\Exception $e) {
-                        echo $e->getMessage();
+                        echo '<div class="notice notice-success"><p>';
+                        esc_html($e->getMessage());
+                        echo '</p></div>';
                     }
                     if ($store['code'] === 200) {
                         echo '<div class="notice notice-success"><p>';
