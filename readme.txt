@@ -2,7 +2,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, WPForms, payment gateway
 Tested up to: 6.8
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -203,3 +203,9 @@ See the FAQ on [https://coinsnap.io/coinsnap-for-wpforms-plugin/](https://coinsn
 * Update: Prevented redirect to BTCPay server if payment amount is less than 0.000005869 BTC (0.50 EUR) for onchain payments, 0.000001 BTC (1 SAT) for Lightning payment or currency is not supported.
 * Update: BTCPay setup wizard is added in BTCPay server settings.
 * Update: Minimum order amount is added to connection status notice.
+
+= 1.3.0 :: 2025-06-23 =
+* Update: Unique name for BTCPay server setup Wizard return URL is set.
+* Update: Webhook data is saved as setting in Wordpress database.
+* Update: Added secret string check in webhook payload process.
+* Compatibility with WPForms Plugin 1.9.6.1 is tested.
