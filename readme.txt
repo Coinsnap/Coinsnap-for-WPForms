@@ -2,7 +2,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, WPForms, payment gateway
 Tested up to: 6.8
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -209,3 +209,10 @@ See the FAQ on [https://coinsnap.io/coinsnap-for-wpforms-plugin/](https://coinsn
 * Update: Webhook data is saved as setting in Wordpress database.
 * Update: Added secret string check in webhook payload process.
 * Compatibility with WPForms Plugin 1.9.6.1 is tested.
+
+= 1.3.1 :: 2025-07-10 =
+* Updated **Generate API key** button behavior.
+* Compatibility with WPForms Plugin 1.9.6.2 is tested.
+* Updated Coinsnap Wordpress library.
+* Updated WPForms Pro plugin check.
+

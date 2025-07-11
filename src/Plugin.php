@@ -87,10 +87,12 @@ class Plugin extends WPForms_Payment {
             // Data does get submitted with url-encoded payload, so parse $_POST here.
             if (!empty($_POST) || wp_verify_nonce(filter_input(INPUT_POST,'wp_nonce',FILTER_SANITIZE_FULL_SPECIAL_CHARS),'-1')) {
                 $data['apiKey'] = filter_input(INPUT_POST,'apiKey',FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? null;
-                $permissions = (isset($_POST['permissions']) && is_array($_POST['permissions']))? $_POST['permissions'] : null;
-                    if (isset($permissions)) {
+                if(isset($_POST['permissions'])){
+                    $permissions = array_map('sanitize_text_field', wp_unslash($_POST['permissions']));
+                    if(is_array($permissions)){
                         foreach ($permissions as $key => $value) {
-                        $data['permissions'][$key] = sanitize_text_field($permissions[$key] ?? null);
+                            $data['permissions'][$key] = sanitize_text_field($permissions[$key] ?? null);
+                        }
                     }
                 }
             }
@@ -476,7 +478,7 @@ class Plugin extends WPForms_Payment {
 			]
 		);
                 
-                echo '<div class="wpforms-panel-field btcpay"><a href="#" class="btcpay-apikey-link">' . esc_html__( 'Check connection', 'coinsnap-for-wpforms' ).'</a><br/><br/><button class="button btcpay-apikey-link" id="btcpay_wizard_button" target="_blank">'. esc_html__('Generate API key','coinsnap-for-wpforms').'</button></div>';
+                echo '<div class="wpforms-panel-field btcpay"><a href="#" class="btcpay-apikey-link">' . esc_html__( 'Check connection', 'coinsnap-for-wpforms' ).'</a><br/><br/><button type="button" class="button btcpay-apikey-link" id="btcpay_wizard_button" target="_blank">'. esc_html__('Generate API key','coinsnap-for-wpforms').'</button></div>';
 		
                 wpforms_panel_field(
 			'text',
