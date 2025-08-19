@@ -220,5 +220,5 @@ See the FAQ on [https://coinsnap.io/coinsnap-for-wpforms-plugin/](https://coinsn
 * Update: Added nonce check for BTCPay server request in Wizard setup flow.
 * Updated BTCPay server minimum payment amount calculation system
 * Updated BTCPay server events and webhook payload handler
-* Compatibility with WooCommerce 1.9.7.3 is tested.
+* Compatibility with WPForms Plugin 1.9.7.3 is tested.
 

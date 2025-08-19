@@ -214,4 +214,4 @@ From here on you can follow 1.1 to 1.3 and you will be set to sell for Bitcoin i
 * Update: Added nonce check for BTCPay server request in Wizard setup flow.
 * Updated BTCPay server minimum payment amount calculation system
 * Updated BTCPay server events and webhook payload handler
-* Compatibility with WooCommerce 1.9.7.3 is tested.
+* Compatibility with WPForms Plugin 1.9.7.3 is tested.
