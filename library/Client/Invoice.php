@@ -9,6 +9,7 @@ header('Access-Control-Allow-Origin: *');
 
 use Coinsnap\Result\InvoicePaymentMethod;
 use Coinsnap\Util\PreciseNumber;
+use Coinsnap\Http\WPRemoteClient;
 
 class Invoice extends AbstractClient{
     
@@ -21,16 +22,24 @@ class Invoice extends AbstractClient{
         }
     }
     
+    /*  Invoice::loadExchangeRates() method loads exchange rates 
+     *  for fiat and crypto currencies from coingecko.com server in real time.
+     *  We don't send any data from the plugin or Wordpress database.
+     *  Method returns array with result code, exchange rates or error
+     */
     public function loadExchangeRates(): array {
         $url = 'https://api.coingecko.com/api/v3/exchange_rates';
-        $response = file_get_contents($url);
+        $headers = [];
+        $method = 'GET';
+        $response = $this->getHttpClient()->request($method, $url, $headers);
         
-        if($response === false){
+        if ($response->getStatus() === 200) {
+            $body = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        }
+        else {
             return array('result' => false, 'error' => 'ratesLoadingError');
         }
         
-        $body = json_decode($response, true);
-    
         if (count($body)<1 || !isset($body['rates'])){
             return array('result' => false, 'error' => 'ratesListError');
         }
@@ -40,7 +49,7 @@ class Invoice extends AbstractClient{
     
     public function checkPaymentData($amount,$currency,$provider = 'coinsnap',$mode = 'invoice'): array {
         
-        if($provider === 'bitcoin' || $provider === 'lightning'){
+        if($provider === 'bitcoin'){
             $btcPayCurrencies = $this->loadExchangeRates();
             
             if(!$btcPayCurrencies['result']){
@@ -52,8 +61,9 @@ class Invoice extends AbstractClient{
             }
             
             else {
+                $eurbtc = (isset($btcPayCurrencies['data']['eur']['value']))? 1/$btcPayCurrencies['data']['eur']['value']*0.50 : 0.000005;
                 $rate = 1/$btcPayCurrencies['data'][strtolower($currency)]['value'];
-                $min_value_btcpay = ($provider === 'bitcoin')? 0.000005869 : 0.000001;
+                $min_value_btcpay = ($provider === 'bitcoin')? $eurbtc : 0.0000001;
                 $min_value = $min_value_btcpay/$rate;
                 
                if($mode === 'calculation'){
@@ -71,7 +81,7 @@ class Invoice extends AbstractClient{
             }
         }
         
-        if($provider === 'coinsnap'){
+        if($provider === 'coinsnap' || $provider === 'lightning'){
         
             $coinsnapCurrencies = $this->getCurrencies();
 
@@ -82,13 +92,7 @@ class Invoice extends AbstractClient{
                 return array('result' => false,'error' => 'currencyError','min_value' => '');
             }
             
-            $min_value_array = array(
-                "SATS" => 1,
-                "JPY" => 1,
-                "RUB" => 1,
-                "BTC" => 0.000001
-            );
-            
+            $min_value_array = ["SATS" => 1,"JPY" => 1,"RUB" => 1,"BTC" => 0.000001];
             $min_value = (isset($min_value_array[$currency]))? $min_value_array[$currency] : 0.01;
             
             if($mode === 'calculation'){
@@ -129,7 +133,7 @@ class Invoice extends AbstractClient{
         // Prepare metadata.
         if(!isset($metaData['orderNumber']) && !empty($orderId)){ $metaData['orderNumber'] = $orderId;}
         if(!isset($metaData['customerName']) && !empty($customerName)){ $metaData['customerName'] = $customerName;}
-
+        
         $body_array = array(
             'amount' => $amount !== null ? $amount->__toString() : null,
             'currency' => $currency,
@@ -139,7 +143,12 @@ class Invoice extends AbstractClient{
             'metadata' => (count($metaData) > 0)? $metaData : null,
             'referralCode' => $referralCode,
             'redirectAutomatically' => $redirectAutomatically,
-            'walletMessage' => $walletMessage
+            'walletMessage' => $walletMessage,
+            'checkout' => [
+                'redirectUrl'           => $redirectUrl,
+                'redirectAutomatically' => $redirectAutomatically,
+                'redirectUrl' => $redirectUrl,
+            ]
         );
 
         $body = wp_json_encode($body_array,JSON_THROW_ON_ERROR);
