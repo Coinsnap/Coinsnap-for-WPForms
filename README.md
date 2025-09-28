@@ -10,7 +10,7 @@
 * Requires at least: 5.2
 * Tested up to: 6.8
 * Requires PHP: 7.4
-* Stable tag: 1.4.0
+* Stable tag: 1.4.1
 * License: GPL2
 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -215,3 +215,7 @@ From here on you can follow 1.1 to 1.3 and you will be set to sell for Bitcoin i
 * Updated BTCPay server minimum payment amount calculation system
 * Updated BTCPay server events and webhook payload handler
 * Compatibility with WPForms Plugin 1.9.7.3 is tested.
+
+##### 1.4.1 :: 2025-09-28
+* Updated registration and webhook payload handler
+* Compatibility with WPForms Plugin 1.9.8.1 is tested.

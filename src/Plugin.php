@@ -16,7 +16,8 @@ class Plugin extends WPForms_Payment {
     private $allowed_to_process = false;
     private $amount = '';		
     private $payment_settings = [];
-    public const WEBHOOK_EVENTS = ['New','Expired','Settled','Processing'];	 
+    public const COINSNAP_WEBHOOK_EVENTS = ['New','Expired','Settled','Processing'];
+    public const BTCPAY_WEBHOOK_EVENTS = ['InvoiceCreated','InvoiceExpired','InvoiceSettled','InvoiceProcessing'];
         
     public static function get_instance() {
         static $instance;
@@ -57,11 +58,6 @@ class Plugin extends WPForms_Payment {
             global $wp_query;
             $notice = new \Coinsnap\Util\Notice();
             
-            $form_id = filter_input(INPUT_GET,'form_id',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            
-            $form = wpforms()->form->get( absint( $form_id ) );
-            $this->form_data = json_decode($form->post_content, true);
-
             // Only continue on a coinsnap-for-wpforms-btcpay-settings-callback request.    
             if (!isset( $wp_query->query_vars['coinsnap-for-wpforms-btcpay-settings-callback']) || !isset($this->form_data['payments'][ $this->slug ])) {
                 return;
@@ -71,6 +67,11 @@ class Plugin extends WPForms_Payment {
                 return;
             }
             
+            $form_id = filter_input(INPUT_GET,'form_id',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            
+            $form = wpforms()->form->get( absint( $form_id ) );
+            $this->form_data = json_decode($form->post_content, true);
+
             $payment_settings = $this->form_data['payments'][ $this->slug ];
             $this->payment_settings = $payment_settings;
 
@@ -864,7 +865,7 @@ class Plugin extends WPForms_Payment {
             }
 
             // Handle missing or invalid signature
-            if (!isset($signature)) {
+            if (null === $signature) {
                 wp_die('Authentication required', '', ['response' => 401]);
             }
 
@@ -878,7 +879,7 @@ class Plugin extends WPForms_Payment {
                 // Parse the JSON payload
                 $postData = json_decode($rawPostData, false, 512, JSON_THROW_ON_ERROR);
                 
-                if (!isset($postData->invoiceId)) {
+                if ($postData->invoiceId === null) {
                     wp_die('No Coinsnap invoiceId provided', '', ['response' => 400]);
                 }
 
@@ -1077,13 +1078,14 @@ class Plugin extends WPForms_Payment {
         
         $form_id = (isset($this->form_data['id']) && $this->form_data['id'] > 0)? $this->form_data['id'] : 0;
         if($form_id > 0){
-        
+            
             try {
                 $whClient = new Webhook( $apiUrl, $apiKey );
+                $webhook_events = ($this->getPaymentProvider() === 'btcpay')? self::BTCPAY_WEBHOOK_EVENTS : self::COINSNAP_WEBHOOK_EVENTS;
                 $webhook = $whClient->createWebhook(
                     $storeId,   //$storeId
                     $this->get_webhook_url(), //$url
-                    self::WEBHOOK_EVENTS,   //$specificEvents
+                    $webhook_events,   //$specificEvents
                     null    //$secret
                 );
 
@@ -1105,25 +1107,5 @@ class Plugin extends WPForms_Payment {
             }
         }
 	return null;
-    }
-
-    public function updateWebhook(string $webhookId,string $webhookUrl,string $secret,bool $enabled,bool $automaticRedelivery,?array $events): ?WebhookResult {
-        try {
-            $whClient = new Webhook($this->getApiUrl(), $this->getApiKey() );
-            $webhook = $whClient->updateWebhook(
-                $this->getStoreId(),
-                $webhookUrl,
-		$webhookId,
-		$events ?? self::WEBHOOK_EVENTS,
-		$enabled,
-		$automaticRedelivery,
-		$secret
-            );
-            return $webhook;
-        }
-        catch (\Throwable $e) {
-            $errorMessage = __('Error updating existing Webhook from Coinsnap', 'coinsnap-for-wpforms' ) . $e->getMessage();
-            $data['errors']['form']['coinsnap'] = esc_html($errorMessage);
-	}
     }
 }
