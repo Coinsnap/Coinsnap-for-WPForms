@@ -2,7 +2,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, WPForms, payment gateway
 Tested up to: 6.8
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -225,5 +225,10 @@ See the FAQ on [https://coinsnap.io/coinsnap-for-wpforms-plugin/](https://coinsn
 = 1.4.1 :: 2025-09-28 =
 * Updated registration and webhook payload handler
 * Compatibility with WPForms Plugin 1.9.8.1 is tested.
+
+= 1.4.2 :: 2025-10-14 =
+* Update: Added non-supported by BTCPay server currencies handler on invoice request flow.
+* Update: Added custom redirect after payment page in module settings.
+* Compatibility with WPForms Plugin 1.9.8.2 is tested.
 
 

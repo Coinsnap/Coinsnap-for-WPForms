@@ -522,6 +522,19 @@ class Plugin extends WPForms_Payment {
 				'tooltip' => esc_html__( 'Redirect after payment on Thank you page automatically', 'coinsnap-for-wpforms' ),
 			]
 		);
+                
+                wpforms_panel_field(
+			'text',
+			$this->slug,
+			'returnurl',
+			$this->form_data,
+			esc_html__( 'Return URL after payment', 'coinsnap-for-wpforms' ),
+			[
+				'parent'  => 'payments',
+				'tooltip' => esc_html__( 'Custom return URL after successful payment (default URL if blank)', 'coinsnap-for-wpforms' ),
+			]
+		);
+                
 
 		wpforms_panel_field(
 			'select',
@@ -724,7 +737,7 @@ class Plugin extends WPForms_Payment {
             $return_url = esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) );
         }
 
-        $return_url = esc_url_raw(
+        $return_url = (!empty($this->payment_settings['coinsnap_returnurl']))? $this->payment_settings['coinsnap_returnurl'] : esc_url_raw(
             add_query_arg([				
                 'wpforms_return' => base64_encode( $query_args ),
                 ],				
@@ -754,14 +767,29 @@ class Plugin extends WPForms_Payment {
         $checkoutOptions = new \Coinsnap\Client\InvoiceCheckoutOptions();
         $checkoutOptions->setRedirectURL( $return_url );
         
-        $camount = \Coinsnap\Util\PreciseNumber::parseFloat($amount,2);
-        
-        // Handle Sats-mode because BTCPay does not understand SAT as a currency we need to change to BTC and adjust the amount.
-        if ($currency === 'SATS' && $this->get_payment_provider() === 'btcpay') {
-            $currency = 'BTC';
-            $amountBTC = bcdiv($camount->__toString(), '100000000', 8);
-            $camount = \Coinsnap\Util\PreciseNumber::parseString($amountBTC);
+        if($this->get_payment_provider() === 'btcpay' && $currency !== 'BTC'){
+                $store = new \Coinsnap\Client\Store($this->getApiUrl(), $this->getApiKey());
+                $btcpayCurrencies = $store -> getStoreCurrenciesRates($this->getStoreId(),array($currency));
+                $isCurrency = true;
+                if(!isset($btcpayCurrencies['result']['error']) && count($btcpayCurrencies['result']['currencies'])>0){
+                        if(!isset($btcpayCurrencies['result']['currencies']['BTC_'.$currency])){
+                            $isCurrency = false;
+                        }
+                }
+                else {
+                    $isCurrency = false;
+                }
+                    
+                // Handle currencies non-supported by BTCPay Server, we need to change them BTC and adjust the amount.
+                if( !$isCurrency ){
+                        $currency = 'BTC';
+                        $rate = 1/$checkInvoice['rate'];
+                        $amountBTC = bcdiv(strval($amount), strval($rate), 8);
+                        $amount = (float)$amountBTC;
+                }
         }
+        
+        $camount = ($currency === 'BTC')? \Coinsnap\Util\PreciseNumber::parseFloat($amount,8) : \Coinsnap\Util\PreciseNumber::parseFloat($amount,2);
         
         $redirectAutomatically = ($this->payment_settings['autoredirect'] == 0)? false : true;
         $walletMessage = '';
