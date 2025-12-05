@@ -8,9 +8,9 @@
 * Contributors: coinsnap
 * Tags: Lightning, Lightning Payment, SATS, Satoshi sats, bitcoin, Wordpress, WP Forms, accept bitcoin, bitcoin plugin, bitcoin payment processor, bitcoin e-commerce, Lightning Network, cryptocurrency, lightning payment processor
 * Requires at least: 5.2
-* Tested up to: 6.8
+* Tested up to: 6.9
 * Requires PHP: 7.4
-* Stable tag: 1.4.2
+* Stable tag: 1.4.3
 * License: GPL2
 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,7 +32,7 @@ Coinsnap’s Bitcoin payment plugin for WPForms makes it amazingly simple for yo
 ## Accept Bitcoin payments with WPForms in only 3 steps: ##
 
 * Get your [free Coinsnap account](https://app.coinsnap.io/register) with just your email
-* Install, activate and configure the plugin in your WordPress backend ([see the installation guide](https://coinsnap.io/coinsnap-for-wpforms-installation-guide/))
+* Install, activate and configure the plugin in your WordPress backend ([see the installation guide](https://coinsnap.io/modules/wpforms/wpforms-installation-guide/))
 * Create payment forms in WPForms, place them at the appropriate places on your WordPress website and accept Bitcoin payments from your customers
 
 
@@ -68,17 +68,17 @@ Coinsnap’s Bitcoin payment plugin for WPForms makes it amazingly simple for yo
 ## More information: ##
 
 * Demo Store: [https://wpforms.coinsnap.org/](https://wpforms.coinsnap.org/)
-* Product page: [https://coinsnap.io/coinsnap-for-wpforms-plugin/](https://coinsnap.io/coinsnap-for-wpforms-plugin/)
-* Installation Guide: [https://coinsnap.io/coinsnap-for-wpforms-installation-guide/](https://coinsnap.io/coinsnap-for-wpforms-installation-guide/) 
+* Product page: [https://coinsnap.io/modules/wpforms/](https://coinsnap.io/modules/wpforms/)
+* Installation Guide: [https://coinsnap.io/modules/wpforms/wpforms-installation-guide/](https://coinsnap.io/modules/wpforms/wpforms-installation-guide/) 
 * Github plugin page: [https://github.com/Coinsnap/Coinsnap-for-WPForms](https://github.com/Coinsnap/Coinsnap-for-WPForms)
 
 
 ## Documentation: ##
 
 * [Coinsnap API (1.0) documentation](https://docs.coinsnap.io/)
-* [Frequently Asked Questions](https://coinsnap.io/faq/) 
-* [Terms and Conditions](https://coinsnap.io/general-terms-and-conditions/)
-* [Privacy Policy](https://coinsnap.io/privacy/)
+* [Frequently Asked Questions](https://coinsnap.io/help/coinsnap-faq/) 
+* [Terms and Conditions](https://coinsnap.io/info/general-terms-and-conditions/)
+* [Privacy Policy](https://coinsnap.io/info/privacy-policy/)
 
 
 
@@ -220,8 +220,19 @@ From here on you can follow 1.1 to 1.3 and you will be set to sell for Bitcoin i
 * Updated registration and webhook payload handler
 * Compatibility with WPForms Plugin 1.9.8.1 is tested.
 
+<<<<<<< Updated upstream
 ##### 1.4.2 :: 2025-10-14 =
 * Update: Added non-supported by BTCPay server currencies handler on invoice flow.
+=======
+##### 1.4.2 :: 2025-10-14
+* Update: Added non-supported by BTCPay server currencies handler on invoice request flow.
+>>>>>>> Stashed changes
 * Update: Added custom redirect after payment page in module settings.
 * Compatibility with WPForms Plugin 1.9.8.2 is tested.
+
+##### 1.4.3 :: 2025-12-05
+* Updated \Coinsnap\Client\Store::getStore() method data usage.
+* Compatibility with Wordpress 6.9 is tested.
+* Compatibility with WPForms Plugin 1.9.8.5 is tested.
+
 

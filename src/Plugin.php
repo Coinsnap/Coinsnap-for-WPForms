@@ -226,7 +226,7 @@ class Plugin extends WPForms_Payment {
                 try {
                     $this_store = $store->getStore($this->getStoreId());
 
-                    if ($this_store['code'] !== 200) {
+                    if ($this_store->getData()['code'] !== 200) {
                         $this->sendJsonResponse($response);
                     }
 
@@ -373,7 +373,7 @@ class Plugin extends WPForms_Payment {
                         esc_html($e->getMessage());
                         echo '</p></div>';
                     }
-                    if ($store['code'] === 200) {
+                    if ($store->getData()['code'] === 200) {
                         echo '<div class="notice notice-success"><p>';
                         esc_html_e('WP Forms: Established connection to Coinsnap Server', 'coinsnap-for-wpforms');
                         echo '</p></div>';
@@ -587,8 +587,12 @@ class Plugin extends WPForms_Payment {
         $store = new \Coinsnap\Client\Store($this->getApiUrl(), $this->getApiKey());
         
         try {
+<<<<<<< Updated upstream
             $this_store = $store->getStore($this->getStoreId());
             $_provider = $this->get_payment_provider();
+=======
+            $_provider = $this->getPaymentProvider();
+>>>>>>> Stashed changes
             if($_provider === 'btcpay'){
                 try {
                     $storePaymentMethods = $store->getStorePaymentMethods($this->getStoreId());
