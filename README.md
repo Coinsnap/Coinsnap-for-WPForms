@@ -220,14 +220,11 @@ From here on you can follow 1.1 to 1.3 and you will be set to sell for Bitcoin i
 * Updated registration and webhook payload handler
 * Compatibility with WPForms Plugin 1.9.8.1 is tested.
 
-<<<<<<< Updated upstream
-##### 1.4.2 :: 2025-10-14 =
-* Update: Added non-supported by BTCPay server currencies handler on invoice flow.
-=======
 ##### 1.4.2 :: 2025-10-14
 * Update: Added non-supported by BTCPay server currencies handler on invoice request flow.
->>>>>>> Stashed changes
 * Update: Added custom redirect after payment page in module settings.
+* Fixed bug with webhook registration on BTCPay Server
+* Fixed bug in BTCPay setup wizard process
 * Compatibility with WPForms Plugin 1.9.8.2 is tested.
 
 ##### 1.4.3 :: 2025-12-05

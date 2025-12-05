@@ -59,9 +59,11 @@ class Plugin extends WPForms_Payment {
             $notice = new \Coinsnap\Util\Notice();
             
             // Only continue on a coinsnap-for-wpforms-btcpay-settings-callback request.    
-            if (!isset( $wp_query->query_vars['coinsnap-for-wpforms-btcpay-settings-callback']) || !isset($this->form_data['payments'][ $this->slug ])) {
+            if (!isset( $wp_query->query_vars['coinsnap-for-wpforms-btcpay-settings-callback'])) {
                 return;
             }
+            
+            //  || !isset($this->form_data['payments'][ $this->slug ])
             
             if(!isset($wp_query->query_vars['coinsnap-for-wpforms-btcpay-nonce']) || !wp_verify_nonce($wp_query->query_vars['coinsnap-for-wpforms-btcpay-nonce'],'coinsnapwpforms-btcpay-nonce')){
                 return;
@@ -116,7 +118,7 @@ class Plugin extends WPForms_Payment {
                     $notice->addNotice('success', __('Successfully received api key and store id from BTCPay Server API. Please finish setup by saving this settings form.', 'coinsnap-for-wpforms'));
 
                     // Register a webhook.
-                    if ($this->registerWebhook( $apiData->getStoreID(), $apiData->getApiKey(), $this->get_webhook_url())) {
+                    if ($this->registerWebhook( $apiData->getStoreID(), $apiData->getApiKey(), $apiData->getStoreId())) {
                         $messageWebhookSuccess = __( 'Successfully registered a new webhook on BTCPay Server.', 'coinsnap-for-wpforms' );
                         $notice->addNotice('success', $messageWebhookSuccess);
                     }
@@ -180,7 +182,7 @@ class Plugin extends WPForms_Payment {
             }
             
             
-            $_provider = $this->get_payment_provider();
+            $_provider = $this->getPaymentProvider();
 
             $client = new \Coinsnap\Client\Invoice($this->getApiUrl(),$this->getApiKey());
             $currency = strtoupper( wpforms_get_currency() );
@@ -483,7 +485,7 @@ class Plugin extends WPForms_Payment {
 			]
 		);
                 
-                echo '<div class="wpforms-panel-field btcpay"><a href="#" class="btcpay-apikey-link">' . esc_html__( 'Check connection', 'coinsnap-for-wpforms' ).'</a><br/><br/><button type="button" class="button btcpay-apikey-link" id="btcpay_wizard_button" target="_blank">'. esc_html__('Generate API key','coinsnap-for-wpforms').'</button></div>';
+                echo '<div class="wpforms-panel-field btcpay"><a class="btcpay-apikey-link">' . esc_html__( 'Check connection', 'coinsnap-for-wpforms' ).'</a><br/><br/><button type="button" class="button btcpay-apikey-link" id="btcpay_wizard_button">'. esc_html__('Generate API key','coinsnap-for-wpforms').'</button></div>';
 		
                 wpforms_panel_field(
 			'text',
@@ -587,12 +589,7 @@ class Plugin extends WPForms_Payment {
         $store = new \Coinsnap\Client\Store($this->getApiUrl(), $this->getApiKey());
         
         try {
-<<<<<<< Updated upstream
-            $this_store = $store->getStore($this->getStoreId());
-            $_provider = $this->get_payment_provider();
-=======
             $_provider = $this->getPaymentProvider();
->>>>>>> Stashed changes
             if($_provider === 'btcpay'){
                 try {
                     $storePaymentMethods = $store->getStorePaymentMethods($this->getStoreId());
@@ -764,14 +761,14 @@ class Plugin extends WPForms_Payment {
         $metadata['orderNumber'] = $invoice_no;
         $metadata['customerName'] = $buyerName;
         
-        if($this->get_payment_provider() === 'btcpay') {
+        if($this->getPaymentProvider() === 'btcpay') {
                 $metadata['orderId'] = $invoice_no;
         }
 
         $checkoutOptions = new \Coinsnap\Client\InvoiceCheckoutOptions();
         $checkoutOptions->setRedirectURL( $return_url );
         
-        if($this->get_payment_provider() === 'btcpay' && $currency !== 'BTC'){
+        if($this->getPaymentProvider() === 'btcpay' && $currency !== 'BTC'){
                 $store = new \Coinsnap\Client\Store($this->getApiUrl(), $this->getApiKey());
                 $btcpayCurrencies = $store -> getStoreCurrenciesRates($this->getStoreId(),array($currency));
                 $isCurrency = true;
@@ -929,7 +926,7 @@ class Plugin extends WPForms_Payment {
                 $client = new \Coinsnap\Client\Invoice( $this->getApiUrl(), $this->getApiKey() );			
                 $csinvoice = $client->getInvoice($this->getStoreId(), $invoice_id);
                 $status = $csinvoice->getData()['status'];
-                $entry_id = ($this->get_payment_provider() === 'btcpay')? $csinvoice->getData()['metadata']['orderId'] : $csinvoice->getData()['orderId'];
+                $entry_id = ($this->getPaymentProvider() === 'btcpay')? $csinvoice->getData()['metadata']['orderId'] : $csinvoice->getData()['orderId'];
 
                 $payment = wpforms()->get( 'payment' )->get_by( 'entry_id', $entry_id );
                 $this->form_data = wpforms()->get( 'form' )->get($payment->form_id,['content_only' => true,]);
@@ -1048,7 +1045,7 @@ class Plugin extends WPForms_Payment {
         ];
     }
     
-    public function get_payment_provider() {
+    public function getPaymentProvider() {
         return (isset($this->payment_settings['coinsnap_provider']) && $this->payment_settings['coinsnap_provider'] === 'btcpay')? 'btcpay' : 'coinsnap';
     }
     
@@ -1057,15 +1054,15 @@ class Plugin extends WPForms_Payment {
     }
 
     public function getStoreId() {
-        return ($this->get_payment_provider() === 'btcpay')? $this->payment_settings['btcpay_store_id'] : $this->payment_settings['store_id'];
+        return ($this->getPaymentProvider() === 'btcpay')? $this->payment_settings['btcpay_store_id'] : $this->payment_settings['store_id'];
     }
     
     public function getApiKey() {
-        return ($this->get_payment_provider() === 'btcpay')?  $this->payment_settings['btcpay_api_key'] : $this->payment_settings['api_key'] ;
+        return ($this->getPaymentProvider() === 'btcpay')?  $this->payment_settings['btcpay_api_key'] : $this->payment_settings['api_key'] ;
     }
     
     public function getApiUrl() {
-        return ($this->get_payment_provider() === 'btcpay')?  $this->payment_settings['btcpay_server_url'] : COINSNAP_SERVER_URL;
+        return ($this->getPaymentProvider() === 'btcpay')?  $this->payment_settings['btcpay_server_url'] : COINSNAP_SERVER_URL;
     }	
 
     public function webhookExists(string $apiUrl, string $apiKey, string $storeId): bool {
