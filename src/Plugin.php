@@ -89,6 +89,7 @@ class Plugin extends WPForms_Payment {
                 $messageAbort = __('Error on verifiying redirected API Key with stored BTCPay Server url. Aborting API wizard. Please try again or continue with manual setup.', 'coinsnap-for-wpforms');
                 $notice->addNotice('error', $messageAbort);
                 wp_redirect($CoinsnapBTCPaySettingsUrl);
+                exit();
             }
 
             // Data does get submitted with url-encoded payload, so parse $_POST here.
@@ -813,7 +814,7 @@ class Plugin extends WPForms_Payment {
 
             $payurl = $csinvoice->getData()['checkoutLink'];
             wp_redirect( $payurl );
-            exit;
+            exit();
         }
         catch (\Throwable $e){
             $errorMessage = __( 'API connection is not established', 'coinsnap-for-wpforms' );
