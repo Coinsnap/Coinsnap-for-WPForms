@@ -2,7 +2,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, WPForms, payment gateway
 Tested up to: 6.9
-Stable tag: 1.4.3
+Stable tag: 1.5.1
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -238,3 +238,18 @@ See the FAQ on [https://coinsnap.io/modules/wpforms/](https://coinsnap.io/module
 * Compatibility with Wordpress 6.9 is tested.
 * Compatibility with WPForms Plugin 1.9.8.5 is tested.
 
+= 1.4.4 :: 2025-12-29 =
+* Compatibility with WPForms 1.9.8.7 is tested.
+* Updated PHP files protection.
+
+= 1.4.5 :: 2026-02-02 =
+* Compatibility with WPForms 1.9.9.2 is tested.
+* Updated PHP files protection.
+
+= 1.5.0 :: 2026-02-16 =
+* Compatibility with Wordpress 6.9.1 is tested.
+* Updated server connection notification system.
+
+= 1.5.1 :: 2026-03-07 =
+* Compatibility with WPForms 1.9.9.3 - 1.9.9.4 is tested.
+* Updated plugin description.
