@@ -8,7 +8,7 @@
 * Contributors: coinsnap
 * Tags: Lightning, Lightning Payment, SATS, Satoshi sats, bitcoin, Wordpress, WP Forms, accept bitcoin, bitcoin plugin, bitcoin payment processor, bitcoin e-commerce, Lightning Network, cryptocurrency, lightning payment processor
 * Tested up to: 6.9
-* Stable tag: 1.5.1
+* Stable tag: 1.5.2
 * License: GPL2
 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -245,3 +245,9 @@ From here on you can follow 1.1 to 1.3 and you will be set to sell for Bitcoin i
 ##### 1.5.1 :: 2026-03-07
 * Compatibility with WPForms 1.9.9.3 - 1.9.9.4 is tested.
 * Updated plugin description.
+
+##### 1.5.2 :: 2026-04-07
+* Updated \Coinsnap\Client\Invoice class.
+* Updated \Coinsnap\Client\Store class.
+* Compatibility with WPForms 1.10.0.2 is tested.
+* Compatibility with Wordpress 6.9.4 is tested.
