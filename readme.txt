@@ -1,8 +1,8 @@
 === Bitcoin payment for WPForms ===
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, WPForms, payment gateway
-Tested up to: 6.9
-Stable tag: 1.5.2
+Tested up to: 7.0
+Stable tag: 1.5.3
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,8 +23,8 @@ Coinsnap’s Bitcoin payment plugin for WPForms makes it amazingly simple for yo
 
 = Accept Bitcoin payments with WPForms in only 3 steps: =
 
-* Get your [free Coinsnap account](https://app.coinsnap.io/register) with just your email
-* Install, activate and configure the plugin in your WordPress backend ([see the installation guide](https://coinsnap.io/modules/wpforms/wpforms-installation-guide/))
+* Get your [free Coinsnap account](https://app.coinsnap.io/) with just your email
+* Install, activate and configure the plugin in your WordPress backend ([see the installation guide](https://coinsnap.io/user-guides/wpforms-bitcoin-user-guide/))
 * Create payment forms in WPForms, place them at the appropriate places on your WordPress website and accept Bitcoin payments from your customers
 
 
@@ -60,8 +60,8 @@ Coinsnap’s Bitcoin payment plugin for WPForms makes it amazingly simple for yo
 == More information: ==
 
 * Demo Store: [https://wpforms.coinsnap.org/](https://wpforms.coinsnap.org/)
-* Product page: [https://coinsnap.io/modules/wpforms/](https://coinsnap.io/modules/wpforms/)
-* Installation Guide: [https://coinsnap.io/modules/wpforms/wpforms-installation-guide/](https://coinsnap.io/modules/wpforms/wpforms-installation-guide/) 
+* Product page: [https://coinsnap.io/wp-add-ons/wpforms/](https://coinsnap.io/wp-add-ons/wpforms/)
+* Installation Guide: [https://coinsnap.io/user-guides/wpforms-bitcoin-user-guide/](https://coinsnap.io/user-guides/wpforms-bitcoin-user-guide/) 
 * Github plugin page: [https://github.com/Coinsnap/Coinsnap-for-WPForms](https://github.com/Coinsnap/Coinsnap-for-WPForms)
 
 
@@ -69,7 +69,7 @@ Coinsnap’s Bitcoin payment plugin for WPForms makes it amazingly simple for yo
 
 * [Coinsnap API (1.0) documentation](https://docs.coinsnap.io/)
 * [Frequently Asked Questions](https://coinsnap.io/help/coinsnap-faq/) 
-* [Terms and Conditions](https://coinsnap.io/info/general-terms-and-conditions/)
+* [Terms of Service](https://coinsnap.io/info/terms-of-service/)
 * [Privacy Policy](https://coinsnap.io/info/privacy-policy/)
 
 
@@ -134,7 +134,7 @@ If you don’t want to install Coinsnap WPForms plugin directly from your WordPr
 
 Find the green button labeled **Code**. When you click on it, the menu opens and Download ZIP appears. Here you can download the latest version of the Coinsnap plugin to your computer.
 
-Then use the “**Upload plugin**” function to install it. Click on “**Install now**” and the Coinsnap for WPFormsplugin will be added to your WordPress website. It can then be connected to the Coinsnap payment gateway.
+Then use the “**Upload plugin**” function to install it. Click on “**Install now**” and the Coinsnap for WPForms add-on will be added to your WordPress website. It can then be connected to the Coinsnap payment gateway.
 
 As soon as the Coinsnap for WPForms plugin is installed and activated, a message will appear asking you to configure the plugin settings.
 
@@ -148,7 +148,7 @@ Follow updates on plugin's GitHub page:
 
 == Frequently Asked Questions ==
 
-See the FAQ on [https://coinsnap.io/modules/wpforms/](https://coinsnap.io/modules/wpforms/).
+See the FAQ on [https://coinsnap.io/wp-add-ons/wpforms/](https://coinsnap.io/wp-add-ons/wpforms/).
 
 == Screenshots ==
 
@@ -259,3 +259,6 @@ See the FAQ on [https://coinsnap.io/modules/wpforms/](https://coinsnap.io/module
 * Updated \Coinsnap\Client\Store class.
 * Compatibility with WPForms 1.10.0.2 is tested.
 * Compatibility with Wordpress 6.9.4 is tested.
+
+= 1.5.3 :: 2026-05-23 =
+* Compatibility with Wordpress 7.0 is tested.
