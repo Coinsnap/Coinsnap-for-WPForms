@@ -34,6 +34,12 @@ if(!defined('COINSNAP_WPFORMS_PATH')){ define( 'COINSNAP_WPFORMS_PATH', plugin_d
 if(!defined('COINSNAP_WPFORMS_URL')){ define( 'COINSNAP_WPFORMS_URL', plugin_dir_url( WPFORMS_COINSNAP_FILE ) ); }
 if(!defined('COINSNAP_CURRENCIES')){define( 'COINSNAP_CURRENCIES', array("EUR","USD","SATS","BTC","CAD","JPY","GBP","CHF","RUB") );}
 
+require_once COINSNAP_WPFORMS_PATH . 'src/Security.php';
+
+// Invoice records table: created on activation, and on the first load after an update.
+register_activation_hook(__FILE__, ['WPFormsCoinsnap\\Security', 'install']);
+add_action('plugins_loaded', ['WPFormsCoinsnap\\Security', 'install']);
+
 add_action('wpforms_loaded', 'wpforms_coinsnap' );
 add_action('admin_init', 'wpforms_check_dependency');
 
@@ -62,8 +68,9 @@ add_action('init', function() {
 // To be able to use the endpoint without appended url segments we need to do this.
 add_filter('request', function($vars) {
     if (isset($vars['coinsnap-for-wpforms-btcpay-settings-callback'])) {
+        // The proof is the one-time state created when the admin clicked "Generate API key",
+        // never a nonce created in this request.
         $vars['coinsnap-for-wpforms-btcpay-settings-callback'] = true;
-        $vars['coinsnap-for-wpforms-btcpay-nonce'] = wp_create_nonce('coinsnapwpforms-btcpay-nonce');
     }
     return $vars;
 });
