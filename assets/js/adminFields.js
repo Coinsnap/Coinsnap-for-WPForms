@@ -14,13 +14,13 @@ jQuery(document).ready(function ($) {
             $('.wpforms-panel-field.btcpay').hide();
             $('.wpforms-panel-field.btcpay input').removeAttr('required');
             $('.wpforms-panel-field.coinsnap').show();
-            $('.wpforms-panel-field.coinsnap input').attr('required','required');
+            $('.wpforms-panel-field.coinsnap input').not('[data-coinsnap-has-value]').attr('required','required');
         }
         else {
             $('.wpforms-panel-field.coinsnap').hide();
             $('.wpforms-panel-field.coinsnap input').removeAttr('required');
             $('.wpforms-panel-field.btcpay').show();
-            $('.wpforms-panel-field.btcpay input').attr('required','required');
+            $('.wpforms-panel-field.btcpay input').not('[data-coinsnap-has-value]').attr('required','required');
         }
     }
     
@@ -32,7 +32,6 @@ jQuery(document).ready(function ($) {
             }
 	}
         catch (e) {
-            console.error(e);
             return false;
 	}
         return true;

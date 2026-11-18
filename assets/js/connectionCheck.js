@@ -22,7 +22,6 @@ jQuery(function ($) {
                 }
                 
             });
-            console.log('Coinsnap form is saved');
         },3000);        
     });
     

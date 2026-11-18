@@ -3,15 +3,15 @@
  * Plugin Name:     Bitcoin payment for WPForms
  * Plugin URI:      https://coinsnap.io/wp-add-ons/wpforms/
  * Description:     Sell products, downloads, bookings for Bitcoin or get Bitcoin-donations in any form you created with WPForms! Easy setup, fast & simple transactions.
- * Version:         1.5.2
+ * Version:         1.5.3
  * Author:          Coinsnap
  * Author URI:      https://coinsnap.io/
  * Text Domain:     coinsnap-for-wpforms
  * Domain Path:     /languages
  * Requires PHP:    7.4
- * Tested up to:    6.9
+ * Tested up to:    7.0
  * Requires at least: 5.5
- * WPForms tested up to: 1.10.0.2
+ * WPForms tested up to: 1.9.9.4
  * License:         GPL2
  * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -26,13 +26,19 @@ use WPFormsCoinsnap\Plugin;
 
 const WPFORMS_COINSNAP_FILE = __FILE__;
 
-if(!defined('COINSNAP_WPFORMS_VERSION')){ define( 'COINSNAP_WPFORMS_VERSION', '1.5.2' ); }
+if(!defined('COINSNAP_WPFORMS_VERSION')){ define( 'COINSNAP_WPFORMS_VERSION', '1.5.3' ); }
 if(!defined('COINSNAP_WPFORMS_REFERRAL_CODE')){ define( 'COINSNAP_WPFORMS_REFERRAL_CODE', 'D19824' ); }
 if(!defined('COINSNAP_PLUGIN_ID')){ define( 'COINSNAP_PLUGIN_ID', 'coinsnap-for-wpforms' ); }
 if(!defined('COINSNAP_SERVER_URL')){ define( 'COINSNAP_SERVER_URL', 'https://app.coinsnap.io' ); }
 if(!defined('COINSNAP_WPFORMS_PATH')){ define( 'COINSNAP_WPFORMS_PATH', plugin_dir_path( WPFORMS_COINSNAP_FILE ) ); }
 if(!defined('COINSNAP_WPFORMS_URL')){ define( 'COINSNAP_WPFORMS_URL', plugin_dir_url( WPFORMS_COINSNAP_FILE ) ); }
 if(!defined('COINSNAP_CURRENCIES')){define( 'COINSNAP_CURRENCIES', array("EUR","USD","SATS","BTC","CAD","JPY","GBP","CHF","RUB") );}
+
+require_once COINSNAP_WPFORMS_PATH . 'src/Security.php';
+
+// Invoice records table: created on activation, and on the first load after an update.
+register_activation_hook(__FILE__, ['WPFormsCoinsnap\\Security', 'install']);
+add_action('plugins_loaded', ['WPFormsCoinsnap\\Security', 'install']);
 
 add_action('wpforms_loaded', 'wpforms_coinsnap' );
 add_action('admin_init', 'wpforms_check_dependency');
@@ -62,8 +68,9 @@ add_action('init', function() {
 // To be able to use the endpoint without appended url segments we need to do this.
 add_filter('request', function($vars) {
     if (isset($vars['coinsnap-for-wpforms-btcpay-settings-callback'])) {
+        // The proof is the one-time state created when the admin clicked "Generate API key",
+        // never a nonce created in this request.
         $vars['coinsnap-for-wpforms-btcpay-settings-callback'] = true;
-        $vars['coinsnap-for-wpforms-btcpay-nonce'] = wp_create_nonce('coinsnapwpforms-btcpay-nonce');
     }
     return $vars;
 });
