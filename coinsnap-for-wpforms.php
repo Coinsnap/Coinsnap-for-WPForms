@@ -38,45 +38,55 @@ require_once COINSNAP_WPFORMS_PATH . 'src/Security.php';
 
 // Invoice records table: created on activation, and on the first load after an update.
 register_activation_hook(__FILE__, ['WPFormsCoinsnap\\Security', 'install']);
-add_action('plugins_loaded', ['WPFormsCoinsnap\\Security', 'install']);
 
+// WPForms fires wpforms_loaded from its plugins_loaded callback (priority 10), so the check at 20 sees it loaded.
 add_action('wpforms_loaded', 'wpforms_coinsnap' );
-add_action('admin_init', 'wpforms_check_dependency');
+add_action('plugins_loaded', 'wpforms_check_dependency', 20);
 
+/**
+ * The gateway extends WPForms_Payment, which only WPForms Pro ships. WPForms Lite has wpforms() but not
+ * the payment API, so loading the gateway there is a fatal error on every request.
+ */
+function coinsnap_wpforms_pro_active(): bool {
+    return function_exists('wpforms') && class_exists('WPForms_Payment');
+}
+
+// Without WPForms Pro only the admin notice is registered; the plugin stays active and loads once Pro is active.
 function wpforms_check_dependency(){
-    if(admin_url('admin-ajax.php') != home_url( filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_SPECIAL_CHARS ))){
-        if(!is_plugin_active('wpforms/wpforms.php') || !(wpforms()->is_pro())) {
-            add_action('admin_notices', 'wpforms_dependency_notice');
-            deactivate_plugins(plugin_basename(__FILE__));
-        }
+    if (!coinsnap_wpforms_pro_active()) {
+        add_action('admin_notices', 'wpforms_dependency_notice');
     }
 }
 
 function wpforms_dependency_notice(){?>
     <div class="notice notice-error">
-        <p><?php echo esc_html_e('Bitcoin payment for WPForms plugin requires WP Forms to be installed and activated.','coinsnap-for-wpforms'); ?></p>
+        <p><?php esc_html_e('Bitcoin payment for WPForms requires WPForms Pro to be installed and activated. WPForms Lite does not include the payments API this plugin needs.','coinsnap-for-wpforms'); ?></p>
     </div>
     <?php
 }
 
-add_action('init', function() {
-      
-// Setting up and handling custom endpoint for api key redirect from BTCPay Server.
-    add_rewrite_endpoint('coinsnap-for-wpforms-btcpay-settings-callback', EP_ROOT);
-});
-
-// To be able to use the endpoint without appended url segments we need to do this.
-add_filter('request', function($vars) {
-    if (isset($vars['coinsnap-for-wpforms-btcpay-settings-callback'])) {
-        // The proof is the one-time state created when the admin clicked "Generate API key",
-        // never a nonce created in this request.
-        $vars['coinsnap-for-wpforms-btcpay-settings-callback'] = true;
-    }
-    return $vars;
-});
-
-
 function wpforms_coinsnap() {
+    if (!coinsnap_wpforms_pro_active()) {
+        return null;
+    }
+
+    WPFormsCoinsnap\Security::install();
+
+    add_action('init', function() {
+        // Setting up and handling custom endpoint for api key redirect from BTCPay Server.
+        add_rewrite_endpoint('coinsnap-for-wpforms-btcpay-settings-callback', EP_ROOT);
+    });
+
+    // To be able to use the endpoint without appended url segments we need to do this.
+    add_filter('request', function($vars) {
+        if (isset($vars['coinsnap-for-wpforms-btcpay-settings-callback'])) {
+            // The proof is the one-time state created when the admin clicked "Generate API key",
+            // never a nonce created in this request.
+            $vars['coinsnap-for-wpforms-btcpay-settings-callback'] = true;
+        }
+        return $vars;
+    });
+
     require_once COINSNAP_WPFORMS_PATH . '/library/loader.php';	
     require_once COINSNAP_WPFORMS_PATH . '/src/Metadata.php';
     require_once COINSNAP_WPFORMS_PATH . '/src/Plugin.php';	
