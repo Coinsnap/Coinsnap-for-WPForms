@@ -891,12 +891,24 @@ class Plugin extends WPForms_Payment {
         $buyerEmail = $customer_data['email'];				
         $buyerName = $customer_data['name'];        						    	
 
-        $metadata = [];
-        $metadata['orderNumber'] = $invoice_no;
-        $metadata['customerName'] = $buyerName;
-        
-        if($this->getPaymentProvider() === 'btcpay') {
-                $metadata['orderId'] = $invoice_no;
+        // orderId / orderNumber stay the entry ID: the webhook matches the invoice to the entry by it.
+        $metadata = Metadata::for_entry([
+            'entry_id'   => $invoice_no,
+            'payment_id' => $this->payment_id,
+            'form_id'    => $this->form_data['id'] ?? '',
+            'form_title' => (string) ( $this->form_data['settings']['form_title'] ?? '' ),
+            'order_url'  => admin_url( 'admin.php?page=wpforms-payments&view=payment&payment_id=' . (int) $this->payment_id ),
+            'page_url'   => (string) wp_get_referer(),
+            'post_id'    => (int) ( $entry['post_id'] ?? 0 ),
+            'version'    => COINSNAP_WPFORMS_VERSION,
+            'language'   => function_exists( 'determine_locale' ) ? determine_locale() : get_locale(),
+            'fields'     => is_array( $fields ) ? $fields : [],
+        ]);
+        // The buyer as found by get_customer(), which the invoice has always used.
+        foreach ( [ 'customerName' => $buyerName, 'buyerName' => $buyerName, 'buyerEmail' => $buyerEmail, 'buyerPhone' => $customer_data['phone'] ] as $key => $value ) {
+            if ( ! isset( $metadata[ $key ] ) ) {
+                Metadata::put( $metadata, $key, $value );
+            }
         }
 
         $checkoutOptions = new \Coinsnap\Client\InvoiceCheckoutOptions();

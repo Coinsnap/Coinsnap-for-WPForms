@@ -78,6 +78,7 @@ add_filter('request', function($vars) {
 
 function wpforms_coinsnap() {
     require_once COINSNAP_WPFORMS_PATH . '/library/loader.php';	
+    require_once COINSNAP_WPFORMS_PATH . '/src/Metadata.php';
     require_once COINSNAP_WPFORMS_PATH . '/src/Plugin.php';	
     return Plugin::get_instance();
 }
